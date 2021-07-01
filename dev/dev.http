@@ -1,4 +1,5 @@
 GET http://localhost:8080/dev/hallo
+Authorization: Bearer {{accessToken}}
 
 ###
 POST http://localhost:8080/token
@@ -6,7 +7,7 @@ Content-Type: application/json
 
 {
   "username": "user",
-  "password": "$2a$10$h5n4bzgvMfu0n1UROcXwau.pxLaSD2NvCEVrQUKxeBTR0NcyxfJ0C"
+  "password": "password"
 }
 
 ###

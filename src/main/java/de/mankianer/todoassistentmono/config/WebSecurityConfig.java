@@ -1,5 +1,6 @@
 package de.mankianer.todoassistentmono.config;
 
+import de.mankianer.todoassistentmono.config.models.CustomUserDetails;
 import de.mankianer.todoassistentmono.dev.DevUserDetailsService;
 import de.mankianer.todoassistentmono.jwt.JwtAuthenticationEntryPoint;
 import de.mankianer.todoassistentmono.jwt.JwtRequestFilter;
@@ -36,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // configure AuthenticationManager so that it knows from where to load
     // user for matching credentials
     // Use BCryptPasswordEncoder
-    auth.userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
+    auth.inMemoryAuthentication().withUser(new CustomUserDetails("password", "dev")).and().userDetailsService(jwtUserDetailsService).passwordEncoder(passwordEncoder());
   }
 
   @Bean
