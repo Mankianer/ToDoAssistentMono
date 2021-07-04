@@ -6,7 +6,7 @@ plugins {
 
 group = 'de.mankianer'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '15'
 
 configurations {
     compileOnly {
@@ -32,6 +32,9 @@ dependencies {
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    // https://mvnrepository.com/artifact/io.dgraph/dgraph4j
+    implementation group: 'io.dgraph', name: 'dgraph4j', version: '21.03.1'
+
 
 }
 

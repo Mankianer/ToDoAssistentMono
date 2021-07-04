@@ -17,4 +17,4 @@ services:
       - 9090:8080
       - 9080:9080
     restart: on-failure
-    command: dgraph alpha --my=alpha:7080 --zero=zero:5080
+    command: dgraph alpha --my=alpha:7080 --zero=zero:5080 --security "whitelist=172.20.0.1/8"

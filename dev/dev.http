@@ -1,5 +1,5 @@
 GET http://localhost:8080/dev/hallo
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{accessTokenEndless}}
 
 ###
 POST http://localhost:8080/token
@@ -17,3 +17,8 @@ Content-Type: application/json
 {
   "password": "password"
 }
+
+###
+
+GET http://localhost:8080/dev/dgraph/v
+Authorization: Bearer {{accessTokenEndless}}

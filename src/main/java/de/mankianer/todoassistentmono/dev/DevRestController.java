@@ -1,7 +1,13 @@
-package de.mankianer.todoassistentmono;
+package de.mankianer.todoassistentmono.dev;
 
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutionException;
 import javax.annotation.PostConstruct;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Log4j2
 @CrossOrigin
 @RestController()
 @RequestMapping("/dev/")
@@ -17,9 +24,17 @@ public class DevRestController {
 
   private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+  @Autowired
+  private DevDgraph devDgraph;
+
   @PostConstruct
   public void init(){
     bCryptPasswordEncoder = new BCryptPasswordEncoder();
+  }
+
+  @GetMapping("dgraph/v")
+  public ResponseEntity<?> dgraphVersion() {
+    return new ResponseEntity(devDgraph.getDgraphClient().checkVersion(), HttpStatus.OK);
   }
 
   @GetMapping("hallo")
