@@ -28,7 +28,7 @@ public class ToDoAssistentDgraphClientBean {
     DgraphStub stub = DgraphGrpc.newStub(channel);
     dgraphClient = new DgraphClient(stub);
 //    log.info("Dgraph Version: " + dgraphClient.checkVersion().getTag());
-    createSchema();
+//    createSchema();
   }
 
   private void createSchema(){
