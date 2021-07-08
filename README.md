@@ -1,4 +1,4 @@
 # ToDo Assistent Mono
 
-Java Spring Boot Application with Rest Endpoint and Dgraph Database.
+Java Spring Boot Application with Rest Endpoints and Dgraph Database.
 
