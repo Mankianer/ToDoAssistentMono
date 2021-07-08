@@ -1,11 +1,9 @@
 package de.mankianer.todoassistentmono.dev;
 
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.ExecutionException;
+import de.mankianer.todoassistentmono.utils.ToDoAssistentDgraphClientBean;
 import javax.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,7 +23,7 @@ public class DevRestController {
   private BCryptPasswordEncoder bCryptPasswordEncoder;
 
   @Autowired
-  private DevDgraph devDgraph;
+  private ToDoAssistentDgraphClientBean dgraph;
 
   @PostConstruct
   public void init(){
@@ -34,7 +32,7 @@ public class DevRestController {
 
   @GetMapping("dgraph/v")
   public ResponseEntity<?> dgraphVersion() {
-    return new ResponseEntity(devDgraph.getDgraphClient().checkVersion(), HttpStatus.OK);
+    return new ResponseEntity(dgraph.getDgraphClient().checkVersion().getTag(), HttpStatus.OK);
   }
 
   @GetMapping("hallo")

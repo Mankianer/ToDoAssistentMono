@@ -1,22 +1,19 @@
-package de.mankianer.todoassistentmono.dev;
+package de.mankianer.todoassistentmono.utils;
 
-import io.dgraph.DgraphAsyncClient;
+import de.mankianer.todoassistentmono.config.dgraph.Schema;
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphGrpc;
 import io.dgraph.DgraphGrpc.DgraphStub;
 import io.dgraph.DgraphProto.Operation;
-import io.dgraph.DgraphProto.Version;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Log4j2
-@Component
-public class DevDgraph {
+@Service
+public class ToDoAssistentDgraphClientBean {
 
   @Value("${dgraph.adresse.name:localhost}")
   private String dgraphHost;
@@ -35,16 +32,7 @@ public class DevDgraph {
   }
 
   private void createSchema(){
-    String schema = """
-        bloblo: string .
-        
-        type User {
-          name: string!
-          todo: string
-          bloblo: string
-        }
-        """;
-    Operation operation = Operation.newBuilder().setSchema(schema).setRunInBackground(false).build();
+    Operation operation = Operation.newBuilder().setSchema(Schema.PREDICATES + "\n" + Schema.TYPES).setRunInBackground(false).build();
     dgraphClient.alter(operation);
   }
 }
