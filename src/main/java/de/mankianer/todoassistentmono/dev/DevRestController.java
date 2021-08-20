@@ -1,8 +1,25 @@
 package de.mankianer.todoassistentmono.dev;
 
+import com.github.caldav4j.CalDAVCollection;
+import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.BearerToken;
+import com.google.api.client.googleapis.extensions.appengine.auth.oauth2.AppIdentityCredential;
+import com.google.api.client.http.BasicAuthentication;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.gson.Gson;
+import de.mankianer.todoassistentmono.google.GoogleService;
+import de.mankianer.todoassistentmono.google.models.ClientCredential;
 import de.mankianer.todoassistentmono.utils.ToDoAssistentDgraphClientBean;
+import java.util.Collections;
 import javax.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
+import net.fortuna.ical4j.model.Calendar;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +30,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.google.api.services.calendar.CalendarScopes;
 
 @Log4j2
 @CrossOrigin
@@ -22,11 +40,18 @@ public class DevRestController {
 
   private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-  @Autowired
-  private ToDoAssistentDgraphClientBean dgraph;
+  private final ToDoAssistentDgraphClientBean dgraph;
+
+  private final GoogleService googleService;
+
+  public DevRestController(ToDoAssistentDgraphClientBean dgraph,
+      GoogleService googleService) {
+    this.dgraph = dgraph;
+    this.googleService = googleService;
+  }
 
   @PostConstruct
-  public void init(){
+  public void init() {
     bCryptPasswordEncoder = new BCryptPasswordEncoder();
   }
 
@@ -36,14 +61,38 @@ public class DevRestController {
   }
 
   @GetMapping("hallo")
-  public String hallo(){
+  public String hallo() {
     return "Hallo \uD83D\uDC4B";
   }
 
   @PostMapping("password")
-  public String hashPassword(@RequestBody String password){
+  public String hashPassword(@RequestBody String password) {
     String encode = bCryptPasswordEncoder.encode(password);
     boolean matches = bCryptPasswordEncoder.matches(password, encode);
     return encode + " #" + matches;
+  }
+
+  @GetMapping("google")
+  public String googleTest() {
+
+    AppIdentityCredential credential = new AppIdentityCredential(
+        Collections.singletonList(CalendarScopes.CALENDAR));
+
+    ClientCredential clientCredential = googleService.getClientCredential();
+
+    AuthorizationCodeFlow authorizationCodeFlow = new AuthorizationCodeFlow(
+        BearerToken.authorizationHeaderAccessMethod(),
+        new NetHttpTransport(),
+        new GsonFactory(),
+        new GenericUrl(clientCredential.getToken_uri()),
+        new BasicAuthentication(clientCredential.getClient_id(),
+            clientCredential.getClient_secret()),
+        clientCredential.getClient_id(),
+        clientCredential.getAuth_uri());
+
+//    CalDAVCollection collection = new CalDAVCollection();
+//    HttpClient httpclient = HttpClients.createDefault();
+
+    return "token";
   }
 }
