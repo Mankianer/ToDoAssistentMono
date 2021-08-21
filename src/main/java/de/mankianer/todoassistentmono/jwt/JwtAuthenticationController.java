@@ -2,7 +2,13 @@ package de.mankianer.todoassistentmono.jwt;
 
 import de.mankianer.todoassistentmono.jwt.models.JwtRequest;
 import de.mankianer.todoassistentmono.jwt.models.JwtResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,17 +26,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class JwtAuthenticationController {
 
-  @Autowired
-  private AuthenticationManager authenticationManager;
+  @Value("${JWT_TOKEN_VALIDITY}")
+  public int maxAge;
 
-  @Autowired
-  private JwtTokenUtil jwtTokenUtil;
+  private final AuthenticationManager authenticationManager;
 
-  @Autowired
-  private UserDetailsService userDetailsService;
+  private final JwtTokenUtil jwtTokenUtil;
+
+  private final UserDetailsService userDetailsService;
+
+  public JwtAuthenticationController(
+      AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil,
+      UserDetailsService userDetailsService) {
+    this.authenticationManager = authenticationManager;
+    this.jwtTokenUtil = jwtTokenUtil;
+    this.userDetailsService = userDetailsService;
+  }
 
   @RequestMapping(value = "/token", method = RequestMethod.POST)
-  public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
+  public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest, HttpServletResponse response) throws Exception {
 
     authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -39,8 +53,18 @@ public class JwtAuthenticationController {
 
     final String token = jwtTokenUtil.generateToken(userDetails);
 
+    Cookie cookie = new Cookie("blub", "Bearer%20" + token);
+    cookie.setPath("/");
+    cookie.setMaxAge(maxAge);
+    cookie.setHttpOnly(true);
+    cookie.setSecure(true);
+//    response.addCookie(cookie);
+    response.setHeader("Set-Cookie",
+        "Authorization=Bearer+" + token + "; Max-Age=3153600; Path=/; HttpOnly; SameSite=Lax; Secure;");
+
     return ResponseEntity.ok(new JwtResponse(token));
   }
+
 
   private void authenticate(String username, String password) throws Exception {
     try {
@@ -50,5 +74,14 @@ public class JwtAuthenticationController {
     } catch (BadCredentialsException e) {
       throw new Exception("INVALID_CREDENTIALS", e);
     }
+  }
+
+  private String encodeValue(String value) {
+    try {
+      return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+    } catch (UnsupportedEncodingException e) {
+      e.printStackTrace();
+    }
+    return value;
   }
 }

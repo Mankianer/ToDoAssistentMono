@@ -16,6 +16,7 @@ import de.mankianer.todoassistentmono.google.models.ClientCredential;
 import de.mankianer.todoassistentmono.utils.ToDoAssistentDgraphClientBean;
 import java.util.Collections;
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
 import net.fortuna.ical4j.model.Calendar;
 import org.apache.http.client.HttpClient;
@@ -60,8 +61,14 @@ public class DevRestController {
     return new ResponseEntity(dgraph.getDgraphClient().checkVersion().getTag(), HttpStatus.OK);
   }
 
+  @GetMapping("islogin")
+  public String islogin() {
+    return "yes";
+  }
+
   @GetMapping("hallo")
-  public String hallo() {
+  public String hallo(HttpServletResponse response) {
+    response.setHeader("Set-Cookie", "Authorization=Bearer+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxOTQwNTIwMzY5LCJpYXQiOjE2MjUxNjAzNjl9.HtDho41fk77VT5228Z64O1HI6oyXVsQwYxSz5d79Wkw; Max-Age=3153600; Path=/; HttpOnly; SameSite=Lax;");
     return "Hallo \uD83D\uDC4B";
   }
 

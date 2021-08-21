@@ -14,7 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenUtil {
 
-  public static final long JWT_TOKEN_VALIDITY = 24 * 60 * 60 * 365 * 10;
+  @Value("${JWT_TOKEN_VALIDITY}")
+  public long JWT_TOKEN_VALIDITY;
 
   @Value("${jwt.secret}")
   private String secret;
