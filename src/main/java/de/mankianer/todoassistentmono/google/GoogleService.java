@@ -12,6 +12,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.gson.Gson;
+import de.mankianer.todoassistentmono.entities.events.GoogleOAuthLoginEvent;
 import de.mankianer.todoassistentmono.google.models.ClientCredential;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,11 +22,14 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Log4j2
@@ -48,6 +52,13 @@ public class GoogleService {
   private GoogleAuthorizationCodeFlow authorizationCodeFlow;
 
   private Map<String, String> userTokenMap;
+
+  private final ApplicationEventPublisher applicationEventPublisher;
+
+  public GoogleService(
+      ApplicationEventPublisher applicationEventPublisher) {
+    this.applicationEventPublisher = applicationEventPublisher;
+  }
 
   @PostConstruct
   public void init() throws IOException {
@@ -108,6 +119,7 @@ public class GoogleService {
       Credential credential = authorizationCodeFlow
           .createAndStoreCredential(authorizationCodeTokenRequest.execute(), userID);
       userTokenMap.put(userID, credential.getAccessToken());
+      applicationEventPublisher.publishEvent(new GoogleOAuthLoginEvent(userID,credential.getAccessToken()));
 
     } catch (IOException e) {
       log.warn(e);
