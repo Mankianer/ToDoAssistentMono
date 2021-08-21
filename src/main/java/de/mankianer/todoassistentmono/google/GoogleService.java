@@ -1,8 +1,10 @@
 package de.mankianer.todoassistentmono.google;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.AuthorizationCodeTokenRequest;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -17,11 +19,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Service
 public class GoogleService {
 
@@ -31,22 +38,43 @@ public class GoogleService {
   @Value("${MainUserLocalID:main}")
   private String mainUserLocalID;
 
+  @Value("${googleOAuth2RedirectUri}")
+  private String redirectUri;
+
   @Getter
   private ClientCredential clientCredential;
-  private AuthorizationCodeFlow authorizationCodeFlow;
+
+  @Getter
+  private GoogleAuthorizationCodeFlow authorizationCodeFlow;
+
+  private Map<String, String> userTokenMap;
 
   @PostConstruct
   public void init() throws IOException {
+    userTokenMap = new HashMap<>();
     loadClientCredentials();
     loadAuthorizationCodeFlow();
     loadMainUser();
   }
 
+  public String getMainUserToke(){
+    if(userTokenMap.containsKey(mainUserLocalID)){
+      return userTokenMap.get(mainUserLocalID);
+    }
+    log.warn("Main User have to logged in with Google!");
+    try {
+      loadMainUser();
+    } catch (IOException e) {
+      log.error(e);
+    }
+    return null;
+  }
+
   protected void loadMainUser() throws IOException {
     Credential credential = authorizationCodeFlow.loadCredential(mainUserLocalID);
     if (credential == null) {
-
-      System.out.println("GoogleUri: " + authorizationCodeFlow.newAuthorizationUrl().setRedirectUri("https://localhost:8080/google/oauth2/"));
+      System.out.println("GoogleUri: " + authorizationCodeFlow.newAuthorizationUrl()
+          .setRedirectUri(redirectUri));
     }
     System.out.println("cred: " + credential);
   }
@@ -58,15 +86,31 @@ public class GoogleService {
   }
 
   protected void loadAuthorizationCodeFlow() {
-    authorizationCodeFlow = new AuthorizationCodeFlow.Builder(
-        BearerToken.authorizationHeaderAccessMethod(),
+    authorizationCodeFlow = new GoogleAuthorizationCodeFlow(
         new NetHttpTransport(),
         new GsonFactory(),
-        new GenericUrl(clientCredential.getToken_uri()),
-        new BasicAuthentication(clientCredential.getClient_id(),
-            clientCredential.getClient_secret()),
         clientCredential.getClient_id(),
-        clientCredential.getAuth_uri()
-    ).setScopes(Collections.singleton(CalendarScopes.CALENDAR)).build();
+        clientCredential.getClient_secret(),
+        Collections.singleton(CalendarScopes.CALENDAR));
+  }
+
+  public void onCallbackMainUser(@NonNull String code) {
+    onCallbackUser(code, mainUserLocalID);
+  }
+
+  public void onCallbackUser(@NonNull String code, String userID) {
+    try {
+      AuthorizationCodeTokenRequest authorizationCodeTokenRequest = authorizationCodeFlow
+          .newTokenRequest(code);
+
+      authorizationCodeTokenRequest.setRedirectUri(redirectUri);
+
+      Credential credential = authorizationCodeFlow
+          .createAndStoreCredential(authorizationCodeTokenRequest.execute(), userID);
+      userTokenMap.put(userID, credential.getAccessToken());
+
+    } catch (IOException e) {
+      log.warn(e);
+    }
   }
 }
