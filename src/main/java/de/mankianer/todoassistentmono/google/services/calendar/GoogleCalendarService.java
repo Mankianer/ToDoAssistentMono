@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 @Log4j2
 @Service
-public class CalendarService implements CalendarServiceInterface {
+public class GoogleCalendarService implements CalendarServiceInterface {
 
   private NetHttpTransport httpTransport;
 

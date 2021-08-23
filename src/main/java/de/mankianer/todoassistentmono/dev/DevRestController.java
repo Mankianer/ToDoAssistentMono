@@ -7,7 +7,7 @@ import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import de.mankianer.todoassistentmono.google.services.calendar.CalendarService;
+import de.mankianer.todoassistentmono.google.services.calendar.GoogleCalendarService;
 import de.mankianer.todoassistentmono.google.services.GoogleService;
 import de.mankianer.todoassistentmono.google.models.ClientCredential;
 import de.mankianer.todoassistentmono.utils.ToDoAssistentDgraphClientBean;
@@ -37,10 +37,10 @@ public class DevRestController {
   private final ToDoAssistentDgraphClientBean dgraph;
 
   private final GoogleService googleService;
-  private final CalendarService calendarService;
+  private final GoogleCalendarService calendarService;
 
   public DevRestController(ToDoAssistentDgraphClientBean dgraph,
-      GoogleService googleService, CalendarService calendarService) {
+      GoogleService googleService, GoogleCalendarService calendarService) {
     this.dgraph = dgraph;
     this.googleService = googleService;
     this.calendarService = calendarService;
