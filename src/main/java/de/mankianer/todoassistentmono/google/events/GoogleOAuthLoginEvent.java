@@ -1,5 +1,6 @@
-package de.mankianer.todoassistentmono.entities.events;
+package de.mankianer.todoassistentmono.google.events;
 
+import com.google.api.client.auth.oauth2.Credential;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -7,4 +8,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class GoogleOAuthLoginEvent {
   private String username, newAccessToken;
+  private Credential credential;
 }

@@ -1,16 +1,13 @@
 package de.mankianer.todoassistentmono.dev;
 
-import com.github.caldav4j.CalDAVCollection;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.googleapis.extensions.appengine.auth.oauth2.AppIdentityCredential;
 import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.gson.Gson;
+import de.mankianer.todoassistentmono.google.calendar.CalendarService;
 import de.mankianer.todoassistentmono.google.GoogleService;
 import de.mankianer.todoassistentmono.google.models.ClientCredential;
 import de.mankianer.todoassistentmono.utils.ToDoAssistentDgraphClientBean;
@@ -18,10 +15,6 @@ import java.util.Collections;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
-import net.fortuna.ical4j.model.Calendar;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -44,11 +37,13 @@ public class DevRestController {
   private final ToDoAssistentDgraphClientBean dgraph;
 
   private final GoogleService googleService;
+  private final CalendarService calendarService;
 
   public DevRestController(ToDoAssistentDgraphClientBean dgraph,
-      GoogleService googleService) {
+      GoogleService googleService, CalendarService calendarService) {
     this.dgraph = dgraph;
     this.googleService = googleService;
+    this.calendarService = calendarService;
   }
 
   @PostConstruct
@@ -64,6 +59,12 @@ public class DevRestController {
   @GetMapping("islogin")
   public String islogin() {
     return "yes";
+  }
+
+  @GetMapping("printCal")
+  public String printCal() {
+    calendarService.printNext10();
+    return "ok";
   }
 
   @GetMapping("hallo")

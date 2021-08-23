@@ -1,20 +1,14 @@
 package de.mankianer.todoassistentmono.google;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeTokenRequest;
-import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.http.BasicAuthentication;
-import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.gson.Gson;
-import de.mankianer.todoassistentmono.entities.events.GoogleOAuthLoginEvent;
+import de.mankianer.todoassistentmono.google.events.GoogleOAuthLoginEvent;
 import de.mankianer.todoassistentmono.google.models.ClientCredential;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,12 +16,10 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -119,7 +111,7 @@ public class GoogleService {
       Credential credential = authorizationCodeFlow
           .createAndStoreCredential(authorizationCodeTokenRequest.execute(), userID);
       userTokenMap.put(userID, credential.getAccessToken());
-      applicationEventPublisher.publishEvent(new GoogleOAuthLoginEvent(userID,credential.getAccessToken()));
+      applicationEventPublisher.publishEvent(new GoogleOAuthLoginEvent(userID,credential.getAccessToken(),credential));
 
     } catch (IOException e) {
       log.warn(e);
