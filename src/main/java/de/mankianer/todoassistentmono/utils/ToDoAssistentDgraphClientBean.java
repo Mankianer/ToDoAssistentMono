@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.protobuf.ByteString;
 import de.mankianer.todoassistentmono.config.dgraph.Schema;
 import de.mankianer.todoassistentmono.entities.models.DGraphEntity;
+import de.mankianer.todoassistentmono.entities.models.TimeSlot;
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphGrpc;
 import io.dgraph.DgraphGrpc.DgraphStub;
@@ -13,8 +14,13 @@ import io.dgraph.DgraphProto.Response;
 import io.dgraph.Transaction;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -31,9 +37,11 @@ public class ToDoAssistentDgraphClientBean {
   private int port;
   @Getter
   private DgraphClient dgraphClient;
+  private Gson gson;
 
   @PostConstruct
   public void init() {
+    gson = new Gson();
     ManagedChannel channel = ManagedChannelBuilder.forAddress(dgraphHost, port).usePlaintext()
         .build();
     DgraphStub stub = DgraphGrpc.newStub(channel);
@@ -61,6 +69,7 @@ public class ToDoAssistentDgraphClientBean {
       Collection<String> uids = response.getUidsMap().values();
       if (uids.size() > 1) {
         log.warn("more than 1 uid was returned!");
+        response.getUidsMap().forEach((k, v) -> log.warn("{}:{}", k, v));
       }
       entity.setUid(uids.stream().findFirst().orElse(null));
       return entity;
@@ -69,4 +78,37 @@ public class ToDoAssistentDgraphClientBean {
     }
 
   }
+
+  public <T extends DGraphEntity> T[] findByUid(String uid, Class<T> clazz) {
+    String fields = "";
+    try {
+      fields = clazz.getDeclaredConstructor().newInstance().getAllFields().stream()
+          .map(field -> {
+            return field.getName() + "\n";
+          }).collect(Collectors.joining());
+      log.info("fields:{}", fields);
+
+    } catch (Exception e) {
+      log.warn(e);
+      fields = "uid";
+    }
+    String query = """
+        query findByUid($uid: string) {
+           findByUid(func: uid($uid)) {
+           """
+        + fields +
+        """
+           }
+         }""";
+    Map<String, String> vars = Collections.singletonMap("$uid", uid);
+    Response response = getDgraphClient().newReadOnlyTransaction()
+        .queryWithVars(query, vars);
+
+    String json = response.getJson().toStringUtf8();
+    json = json.substring("{\"findByUid\":".length(), json.length() - 1);
+    log.info("response Json:" + json);
+    T[] byUid = gson.fromJson(json, (Type) clazz.arrayType());
+    return byUid;
+  }
+
 }

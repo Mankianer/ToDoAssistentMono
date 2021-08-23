@@ -7,14 +7,15 @@ import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
-import de.mankianer.todoassistentmono.entities.interfaces.ToDoFilter;
 import de.mankianer.todoassistentmono.entities.models.TimeSlot;
 import de.mankianer.todoassistentmono.google.services.calendar.GoogleCalendarService;
 import de.mankianer.todoassistentmono.google.services.GoogleService;
 import de.mankianer.todoassistentmono.google.models.ClientCredential;
+import de.mankianer.todoassistentmono.planing.TimeSlotComponent;
 import de.mankianer.todoassistentmono.utils.ToDoAssistentDgraphClientBean;
-import java.time.LocalDateTime;
+import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
@@ -23,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,12 +43,14 @@ public class DevRestController {
 
   private final GoogleService googleService;
   private final GoogleCalendarService calendarService;
+  private final TimeSlotComponent timeSlotComponent;
 
   public DevRestController(ToDoAssistentDgraphClientBean dgraph,
-      GoogleService googleService, GoogleCalendarService calendarService) {
+      GoogleService googleService, GoogleCalendarService calendarService, TimeSlotComponent timeSlotComponent) {
     this.dgraph = dgraph;
     this.googleService = googleService;
     this.calendarService = calendarService;
+    this.timeSlotComponent = timeSlotComponent;
   }
 
   @PostConstruct
@@ -65,6 +69,18 @@ public class DevRestController {
     timeSlot.setName("Name");
     dgraph.saveToDGraph(timeSlot);
     return "ok";
+  }
+
+  @GetMapping("dgraph/uid/{uid}/")
+  public TimeSlot[] findByUid(@PathVariable("uid") String uid) {
+    var byUid = timeSlotComponent.findByUid(uid);
+    return byUid;
+  }
+
+  @GetMapping("fields")
+  public List<Field> getAllFields() {
+    TimeSlot timeSlot = new TimeSlot();
+    return timeSlot.getAllFields();
   }
 
   @GetMapping("islogin")

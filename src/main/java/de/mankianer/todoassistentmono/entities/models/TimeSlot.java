@@ -3,7 +3,10 @@ package de.mankianer.todoassistentmono.entities.models;
 import de.mankianer.todoassistentmono.entities.interfaces.CalendarEntry;
 import de.mankianer.todoassistentmono.entities.interfaces.TimeSlotInterface;
 import de.mankianer.todoassistentmono.entities.interfaces.ToDoFilter;
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,7 +28,5 @@ public class TimeSlot extends DGraphEntity implements TimeSlotInterface {
   private LocalDateTime end;
   private CalendarEntry calenderEntry;
   private TimeSlotInterface next, previous;
-  private String id;
-
 
 }
