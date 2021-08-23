@@ -86,8 +86,6 @@ public class ToDoAssistentDgraphClientBean {
           .map(field -> {
             return field.getName() + "\n";
           }).collect(Collectors.joining());
-      log.info("fields:{}", fields);
-
     } catch (Exception e) {
       log.warn(e);
       fields = "uid";
