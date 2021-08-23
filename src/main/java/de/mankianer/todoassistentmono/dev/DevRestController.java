@@ -7,10 +7,13 @@ import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import de.mankianer.todoassistentmono.entities.interfaces.ToDoFilter;
+import de.mankianer.todoassistentmono.entities.models.TimeSlot;
 import de.mankianer.todoassistentmono.google.services.calendar.GoogleCalendarService;
 import de.mankianer.todoassistentmono.google.services.GoogleService;
 import de.mankianer.todoassistentmono.google.models.ClientCredential;
 import de.mankianer.todoassistentmono.utils.ToDoAssistentDgraphClientBean;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
@@ -54,6 +57,14 @@ public class DevRestController {
   @GetMapping("dgraph/v")
   public ResponseEntity<?> dgraphVersion() {
     return new ResponseEntity(dgraph.getDgraphClient().checkVersion().getTag(), HttpStatus.OK);
+  }
+
+  @GetMapping("dgraph/save")
+  public String dgraphSave() {
+    TimeSlot timeSlot = new TimeSlot();
+    timeSlot.setName("Name");
+    dgraph.saveToDGraph(timeSlot);
+    return "ok";
   }
 
   @GetMapping("islogin")

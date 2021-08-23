@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface DayScheme {
 
-  List<TimeSlot> getTimeSlots();
+  List<TimeSlotInterface> getTimeSlots();
 
   Context getPlanedContext();
 }
