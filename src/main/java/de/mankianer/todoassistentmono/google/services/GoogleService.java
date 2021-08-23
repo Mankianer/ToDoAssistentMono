@@ -1,4 +1,4 @@
-package de.mankianer.todoassistentmono.google;
+package de.mankianer.todoassistentmono.google.services;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeTokenRequest;
 import com.google.api.client.auth.oauth2.Credential;
@@ -28,15 +28,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class GoogleService {
 
+  /**
+   * Path to Credentials for the GoogleApi from the GoogleProject in credentials.json-file
+   */
   @Value("${GOOGLE_APPLICATION_CREDENTIALS}")
   private String clientCredentialsJsonPath;
 
   @Value("${MainUserLocalID:main}")
   private String mainUserLocalID;
 
+  /**
+   * called by redirection of OAuth2 from GoogleApi via User
+   */
   @Value("${googleOAuth2RedirectUri}")
   private String redirectUri;
 
+  /**
+   * Credentials for the GoogleApi from the GoogleProject
+   */
   @Getter
   private ClientCredential clientCredential;
 
@@ -60,6 +69,11 @@ public class GoogleService {
     loadMainUser();
   }
 
+  /**
+   * try to load the MainUserGoogleApiToken from memory
+   * if not will try to Request via Console
+   * @return
+   */
   public String getMainUserToke(){
     if(userTokenMap.containsKey(mainUserLocalID)){
       return userTokenMap.get(mainUserLocalID);
@@ -73,6 +87,10 @@ public class GoogleService {
     return null;
   }
 
+  /**
+   * will try to Request GoogleApiToken via Console
+   * @throws IOException
+   */
   protected void loadMainUser() throws IOException {
     Credential credential = authorizationCodeFlow.loadCredential(mainUserLocalID);
     if (credential == null) {
@@ -82,12 +100,19 @@ public class GoogleService {
     System.out.println("cred: " + credential);
   }
 
+  /**
+   * try to load Credentials for the GoogleApi from the GoogleProject via credentials.json-file
+   * @throws IOException
+   */
   protected void loadClientCredentials() throws IOException {
     Path path = Paths.get(clientCredentialsJsonPath);
     String json = Files.readString(path);
     clientCredential = new Gson().fromJson(json, ClientCredential.Web.class).getWeb();
   }
 
+  /**
+   * prepare to register User GoogleApiTokens
+   */
   protected void loadAuthorizationCodeFlow() {
     authorizationCodeFlow = new GoogleAuthorizationCodeFlow(
         new NetHttpTransport(),
@@ -97,10 +122,18 @@ public class GoogleService {
         Collections.singleton(CalendarScopes.CALENDAR));
   }
 
+  /**
+   * call by redirection of OAuth2 from GoogleApi via User
+   * @param code
+   */
   public void onCallbackMainUser(@NonNull String code) {
     onCallbackUser(code, mainUserLocalID);
   }
 
+  /**
+   * call by redirection of OAuth2 from GoogleApi via User
+   * @param code
+   */
   public void onCallbackUser(@NonNull String code, String userID) {
     try {
       AuthorizationCodeTokenRequest authorizationCodeTokenRequest = authorizationCodeFlow

@@ -1,11 +1,7 @@
-package de.mankianer.todoassistentmono.google;
+package de.mankianer.todoassistentmono.google.restcontrollers;
 
-import com.google.api.client.auth.oauth2.AuthorizationCodeTokenRequest;
-import java.io.IOException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import de.mankianer.todoassistentmono.google.services.GoogleService;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

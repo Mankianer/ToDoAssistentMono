@@ -1,4 +1,4 @@
-package de.mankianer.todoassistentmono.google.calendar;
+package de.mankianer.todoassistentmono.google.services.calendar;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -48,7 +48,7 @@ public class CalendarService implements CalendarServiceInterface {
 
   private void loadCollection(@NonNull Credential credential) {
     calendar = new Calendar.Builder(httpTransport, new GsonFactory(),
-        credential).setApplicationName("Quickstart").build();
+        credential).setApplicationName("ToDo Assistent").build();
   }
 
   @Override
