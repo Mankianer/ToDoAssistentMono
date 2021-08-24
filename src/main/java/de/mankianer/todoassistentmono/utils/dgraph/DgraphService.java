@@ -59,9 +59,15 @@ public class DgraphService {
     return dgraphRepo.saveToDGraph(entity);
   }
 
-  public <T extends DgraphEntity> T[] findByUid(String uid, Class<T> clazz) {
+  public <T extends DgraphEntity> T findByUid(String uid) {
     DgraphRepo<T> dgraphRepo = new DgraphRepo<>(getDgraphClient());
-    return dgraphRepo.findByUid(uid, clazz);
+    return dgraphRepo.findByUid(uid);
   }
+
+  public <T extends DgraphEntity> boolean deleteFromDGraph(T entity) {
+    DgraphRepo<T> dgraphRepo = new DgraphRepo<>(getDgraphClient());
+    return dgraphRepo.deleteFromDGraph(entity);
+  }
+
 
 }

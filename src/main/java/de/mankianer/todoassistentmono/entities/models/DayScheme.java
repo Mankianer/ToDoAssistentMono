@@ -10,5 +10,5 @@ import lombok.Data;
 public class DayScheme extends DgraphEntity implements DaySchemeInterface {
 
   private List<TimeSlotInterface> timeSlots;
-  private ContextInterface planedContextInterface;
+  private ContextInterface planedContext;
 }

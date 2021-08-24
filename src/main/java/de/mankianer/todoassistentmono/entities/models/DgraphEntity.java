@@ -21,8 +21,7 @@ public class DgraphEntity {
       superclass = superclass.getSuperclass();
       declaredFields.addAll(List.of(superclass.getDeclaredFields()));
     }
-    while (!superclass.getName()
-        .equals("de.mankianer.todoassistentmono.entities.models.DGraphEntity"));
+    while (!DgraphEntity.class.getName().equals(superclass.getName()));
 
     return declaredFields;
   }

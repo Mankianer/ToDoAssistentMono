@@ -72,7 +72,7 @@ public class DevRestController {
   }
 
   @GetMapping("dgraph/uid/{uid}/")
-  public TimeSlot[] findByUid(@PathVariable("uid") String uid) {
+  public TimeSlot findByUid(@PathVariable("uid") String uid) {
     var byUid = timeSlotComponent.findByUid(uid);
     return byUid;
   }
