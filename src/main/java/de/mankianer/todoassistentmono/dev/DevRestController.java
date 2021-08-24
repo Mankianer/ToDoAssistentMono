@@ -8,11 +8,11 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import de.mankianer.todoassistentmono.entities.models.TimeSlot;
-import de.mankianer.todoassistentmono.google.services.calendar.GoogleCalendarService;
-import de.mankianer.todoassistentmono.google.services.GoogleService;
-import de.mankianer.todoassistentmono.google.models.ClientCredential;
-import de.mankianer.todoassistentmono.planing.TimeSlotComponent;
-import de.mankianer.todoassistentmono.utils.ToDoAssistentDgraphClientBean;
+import de.mankianer.todoassistentmono.utils.google.services.calendar.GoogleCalendarService;
+import de.mankianer.todoassistentmono.utils.google.services.GoogleService;
+import de.mankianer.todoassistentmono.utils.google.models.ClientCredential;
+import de.mankianer.todoassistentmono.repos.TimeSlotsRepo;
+import de.mankianer.todoassistentmono.utils.dgraph.DgraphService;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.List;
@@ -39,14 +39,14 @@ public class DevRestController {
 
   private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-  private final ToDoAssistentDgraphClientBean dgraph;
+  private final DgraphService dgraph;
 
   private final GoogleService googleService;
   private final GoogleCalendarService calendarService;
-  private final TimeSlotComponent timeSlotComponent;
+  private final TimeSlotsRepo timeSlotComponent;
 
-  public DevRestController(ToDoAssistentDgraphClientBean dgraph,
-      GoogleService googleService, GoogleCalendarService calendarService, TimeSlotComponent timeSlotComponent) {
+  public DevRestController(DgraphService dgraph,
+      GoogleService googleService, GoogleCalendarService calendarService, TimeSlotsRepo timeSlotComponent) {
     this.dgraph = dgraph;
     this.googleService = googleService;
     this.calendarService = calendarService;

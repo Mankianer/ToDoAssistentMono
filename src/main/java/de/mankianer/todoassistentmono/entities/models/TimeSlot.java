@@ -1,12 +1,9 @@
 package de.mankianer.todoassistentmono.entities.models;
 
-import de.mankianer.todoassistentmono.entities.interfaces.CalendarEntry;
+import de.mankianer.todoassistentmono.entities.interfaces.CalendarEntryInterface;
 import de.mankianer.todoassistentmono.entities.interfaces.TimeSlotInterface;
-import de.mankianer.todoassistentmono.entities.interfaces.ToDoFilter;
-import java.lang.reflect.Field;
+import de.mankianer.todoassistentmono.entities.interfaces.ToDoFilterInterface;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,16 +14,16 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class TimeSlot extends DGraphEntity implements TimeSlotInterface {
+public class TimeSlot extends DgraphEntity implements TimeSlotInterface {
 
   @NonNull
   private String name;
   @NonNull
-  private ToDoFilter toDoFilter;
+  private ToDoFilterInterface toDoFilter;
   @NonNull
   private LocalDateTime start;
   private LocalDateTime end;
-  private CalendarEntry calenderEntry;
+  private CalendarEntryInterface calenderEntry;
   private TimeSlotInterface next, previous;
 
 }

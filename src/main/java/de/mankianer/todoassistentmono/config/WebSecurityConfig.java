@@ -2,8 +2,8 @@ package de.mankianer.todoassistentmono.config;
 
 import de.mankianer.todoassistentmono.config.models.CustomUserDetails;
 import de.mankianer.todoassistentmono.dev.DevUserDetailsService;
-import de.mankianer.todoassistentmono.jwt.JwtAuthenticationEntryPoint;
-import de.mankianer.todoassistentmono.jwt.JwtRequestFilter;
+import de.mankianer.todoassistentmono.utils.jwt.JwtAuthenticationEntryPoint;
+import de.mankianer.todoassistentmono.utils.jwt.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

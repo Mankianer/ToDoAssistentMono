@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 
 public interface TimeSlotInterface {
 
-  CalendarEntry getCalenderEntry();
+  CalendarEntryInterface getCalenderEntry();
 
-  ToDoFilter getToDoFilter();
+  ToDoFilterInterface getToDoFilter();
 
   String getName();
 
