@@ -6,5 +6,5 @@ public interface DaySchemeInterface {
 
   List<TimeSlotInterface> getTimeSlots();
 
-  ContextInterface getPlanedContext();
+  ContextInterface getUsedContext();
 }

@@ -1,5 +1,9 @@
 package de.mankianer.todoassistentmono.entities.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.mankianer.todoassistentmono.entities.interfaces.CalendarEntryInterface;
 import de.mankianer.todoassistentmono.entities.interfaces.TimeSlotInterface;
 import de.mankianer.todoassistentmono.entities.interfaces.ToDoFilterInterface;
@@ -24,6 +28,15 @@ public class TimeSlot extends DgraphEntity implements TimeSlotInterface {
   private LocalDateTime start;
   private LocalDateTime end;
   private CalendarEntryInterface calenderEntry;
+
+  @JsonIgnore
   private TimeSlotInterface next, previous;
 
+  /**
+   *
+   * @return end of Timeslot or the Start of TimeSlot.next or the own start
+   */
+  public LocalDateTime getEnd(){
+    return end != null ? end : (next != null ? next.getStart() : start);
+  }
 }

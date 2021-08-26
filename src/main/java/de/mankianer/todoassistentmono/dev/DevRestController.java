@@ -8,6 +8,8 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import de.mankianer.todoassistentmono.entities.models.TimeSlot;
+import de.mankianer.todoassistentmono.entities.models.YearScheme;
+import de.mankianer.todoassistentmono.planing.generators.SimpleYearSchemeGenerator;
 import de.mankianer.todoassistentmono.utils.google.services.calendar.GoogleCalendarService;
 import de.mankianer.todoassistentmono.utils.google.services.GoogleService;
 import de.mankianer.todoassistentmono.utils.google.models.ClientCredential;
@@ -75,6 +77,11 @@ public class DevRestController {
   public TimeSlot findByUid(@PathVariable("uid") String uid) {
     var byUid = timeSlotComponent.findByUid(uid);
     return byUid;
+  }
+
+  @GetMapping("yearscheme/simple/{year}/")
+  public YearScheme getSimpleYearScheme(@PathVariable("year") int year) {
+    return new SimpleYearSchemeGenerator().createYearScheme(year);
   }
 
   @GetMapping("fields")

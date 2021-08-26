@@ -5,8 +5,7 @@ import lombok.Data;
 @Data
 public class GoogleCalendarEntry extends CalendarEntry {
 
-  @Override
-  public Type getType() {
-    return Type.GOOGLE;
+  public GoogleCalendarEntry() {
+    setType(Type.GOOGLE);
   }
 }
