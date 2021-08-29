@@ -10,13 +10,18 @@ import io.dgraph.DgraphClient;
 import io.dgraph.DgraphProto.Mutation;
 import io.dgraph.DgraphProto.Response;
 import io.dgraph.Transaction;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -48,8 +53,8 @@ public class DgraphRepo<T extends DgraphEntity> {
       Response response = txn.mutate(mutation);
       Collection<String> uids = response.getUidsMap().values();
       String topLevelUid = response.getUidsMap().entrySet().stream()
-            .sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey())).map(entry -> entry.getValue())
-            .findFirst().orElse(null);
+          .sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey())).map(entry -> entry.getValue())
+          .findFirst().orElse(null);
       if (topLevelUid != null) {
         entity = findByUid(topLevelUid);
       }
@@ -70,6 +75,8 @@ public class DgraphRepo<T extends DgraphEntity> {
 
   public T findByUid(String uid) {
     String fields = "";
+    log.info(getQuerryMap());
+
     try {
       fields = actualTypeArgument.getDeclaredConstructor().newInstance().getAllFields().stream()
           .map(field -> {
@@ -97,6 +104,53 @@ public class DgraphRepo<T extends DgraphEntity> {
     T[] byUid = gson.fromJson(json, (Type) actualTypeArgument.arrayType());
 
     return byUid.length > 0 ? byUid[0] : null;
+  }
+
+  private Map getQuerryMap() {
+    return getFieldMap(actualTypeArgument);
+  }
+
+  private Map<String, Map> getFieldMap(Class<? extends DgraphEntity> clazz) {
+    HashMap<String, Map> fieldMap = new HashMap<>();
+    try {
+
+      var instance = clazz.getDeclaredConstructor().newInstance();
+      List<Field> allFields = instance
+          .getAllFields();
+      allFields.forEach(field -> {
+        if (Arrays.stream(field.getDeclaredAnnotations()).filter(
+                annotation -> "JsonIgnore".equals(annotation.annotationType().getSimpleName()))
+            .findFirst().isPresent()) {
+          return;
+        }
+        Class<?> fieldClass = convertFieldToClass(field);
+        try {
+          var fieldInstance = fieldClass.getDeclaredConstructor().newInstance();
+          if (fieldInstance instanceof DgraphEntity) {
+            fieldMap.put(field.getName(), getFieldMap(
+                (Class<? extends DgraphEntity>) fieldInstance.getClass()));
+          } else {
+            fieldMap.put(field.getName(), null);
+          }
+        } catch (Exception e) {
+          fieldMap.put(field.getName(), null);
+        }
+
+      });
+    } catch (Exception e) {
+      log.warn(e);
+      fieldMap.put("uid", null);
+    }
+    return fieldMap;
+  }
+
+  private Class<?> convertFieldToClass(Field field) {
+    Class<?> fieldClass = field.getType();
+    if (field.getType().equals(List.class)) {
+      ParameterizedType listType = (ParameterizedType) field.getGenericType();
+      fieldClass = (Class<?>) listType.getActualTypeArguments()[0];
+    }
+    return fieldClass;
   }
 
   public boolean deleteFromDGraph(T entity) {

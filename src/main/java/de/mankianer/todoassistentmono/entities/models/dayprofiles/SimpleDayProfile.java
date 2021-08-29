@@ -2,6 +2,7 @@ package de.mankianer.todoassistentmono.entities.models.dayprofiles;
 
 import de.mankianer.todoassistentmono.entities.interfaces.ContextInterface;
 import de.mankianer.todoassistentmono.entities.interfaces.DaySchemeInterface;
+import de.mankianer.todoassistentmono.entities.models.Context;
 import de.mankianer.todoassistentmono.entities.models.TimeSlot;
 import de.mankianer.todoassistentmono.entities.models.ToDoFilter;
 import de.mankianer.todoassistentmono.entities.models.dayschemes.DayScheme;
@@ -14,8 +15,7 @@ public class SimpleDayProfile extends DayProfile {
     super("SimpleDayProfile");
   }
 
-  @Override
-  public DayScheme planDayScheme(ContextInterface context) {
+  public DayScheme planDayScheme(Context context) {
 
     DayScheme defaultDayScheme = getDefaultDayScheme(context);
     return defaultDayScheme;
@@ -26,7 +26,7 @@ public class SimpleDayProfile extends DayProfile {
    * @param date - target Date
    * @return DayScheme with day(6:00-18:00) and nighe(18:00-6:00+1d)
    */
-  private DayScheme getDefaultDayScheme(ContextInterface context) {
+  private DayScheme getDefaultDayScheme(Context context) {
     DayScheme dayScheme = new DayScheme(context);
     LocalDate date = context.getDate();
     TimeSlot day = new TimeSlot("day",new ToDoFilter(),  date.atTime(6, 0) );

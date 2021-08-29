@@ -18,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class TimeSlot extends DgraphEntity implements TimeSlotInterface {
+public class TimeSlot extends DgraphEntity {
 
   @NonNull
   private String name;
   @NonNull
-  private ToDoFilterInterface toDoFilter;
+  private ToDoFilter toDoFilter;
   @NonNull
   private LocalDateTime start;
   private LocalDateTime end;

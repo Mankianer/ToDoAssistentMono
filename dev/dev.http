@@ -33,3 +33,8 @@ Authorization: Bearer {{accessTokenEndless}}
 
 POST https://localhost:8080/yearscheme/generator/2022/save/
 Authorization: Bearer {{accessTokenEndless}}
+
+###
+GET https://localhost:8080/yearscheme/2021/
+Authorization: Bearer {{accessTokenEndless}}
+

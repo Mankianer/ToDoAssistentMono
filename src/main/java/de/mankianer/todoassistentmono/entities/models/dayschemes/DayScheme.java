@@ -17,9 +17,9 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class DayScheme extends DgraphEntity implements DaySchemeInterface {
+public class DayScheme extends DgraphEntity {
 
-  private List<TimeSlotInterface> timeSlots;
+  private List<TimeSlot> timeSlots;
   @NonNull
-  private ContextInterface usedContext;
+  private Context usedContext;
 }

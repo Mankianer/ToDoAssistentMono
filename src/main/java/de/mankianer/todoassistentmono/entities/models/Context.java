@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Context extends DgraphEntity implements ContextInterface {
+public class Context extends DgraphEntity {
 
   @NonNull
   private LocalDate date;

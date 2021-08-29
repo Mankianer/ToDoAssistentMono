@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class YearScheme extends DgraphEntity implements YearSchemeInterface {
+public class YearScheme extends DgraphEntity {
 
   private List<DayProfile> allDayProfiles = new ArrayList<>();
   @NonNull
