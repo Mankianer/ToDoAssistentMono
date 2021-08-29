@@ -29,8 +29,9 @@ public class TimeSlot extends DgraphEntity implements TimeSlotInterface {
   private LocalDateTime end;
   private CalendarEntryInterface calenderEntry;
 
+  @com.google.appengine.repackaged.org.codehaus.jackson.annotate.JsonIgnore
   @JsonIgnore
-  private TimeSlotInterface next, previous;
+  private TimeSlot next, previous;
 
   /**
    *

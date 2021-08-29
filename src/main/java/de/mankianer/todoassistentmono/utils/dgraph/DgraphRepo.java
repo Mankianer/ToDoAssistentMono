@@ -1,8 +1,11 @@
 package de.mankianer.todoassistentmono.utils.dgraph;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.protobuf.ByteString;
 import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
+import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTimeTypeAdapter;
+import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTypeAdapter;
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphProto.Mutation;
 import io.dgraph.DgraphProto.Response;
@@ -10,6 +13,8 @@ import io.dgraph.Transaction;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -25,7 +30,9 @@ public class DgraphRepo<T extends DgraphEntity> {
 
   public DgraphRepo(DgraphClient dgraphClient) {
     this.dgraphClient = dgraphClient;
-    this.gson = new Gson();
+    this.gson = new GsonBuilder()
+        .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
     actualTypeArgument = (Class<T>) ((ParameterizedType) getClass()
         .getGenericSuperclass()).getActualTypeArguments()[0];
   }
@@ -38,19 +45,27 @@ public class DgraphRepo<T extends DgraphEntity> {
           .setCommitNow(true)
           .build();
 
-
       Response response = txn.mutate(mutation);
       Collection<String> uids = response.getUidsMap().values();
-      if (uids.size() > 1) {
-        log.warn("more than 1 uid was returned!");
-        response.getUidsMap().forEach((k, v) -> log.warn("{}:{}", k, v));
+      String topLevelUid = response.getUidsMap().entrySet().stream()
+            .sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey())).map(entry -> entry.getValue())
+            .findFirst().orElse(null);
+      if (topLevelUid != null) {
+        entity = findByUid(topLevelUid);
       }
-      entity.setUid(uids.stream().findFirst().orElse(null));
       return entity;
     } finally {
       txn.discard();
     }
 
+  }
+
+  private String findMutationID(String mutionObjectID) {
+    String[] split = mutionObjectID.split("\\.");
+    if (split.length != 3) {
+      return null;
+    }
+    return split[0] + "." + split[1];
   }
 
   public T findByUid(String uid) {
@@ -70,8 +85,8 @@ public class DgraphRepo<T extends DgraphEntity> {
            """
         + fields +
         """
-           }
-         }""";
+              }
+            }""";
     Map<String, String> vars = Collections.singletonMap("$uid", uid);
     Response response = dgraphClient.newReadOnlyTransaction()
         .queryWithVars(query, vars);

@@ -32,8 +32,8 @@ public class SimpleDayProfile extends DayProfile {
     TimeSlot day = new TimeSlot("day",new ToDoFilter(),  date.atTime(6, 0) );
     TimeSlot night = new TimeSlot("night",new ToDoFilter(), date.atTime(18, 0));
     night.setEnd(date.plusDays(1).atTime(6, 0));
-    night.setPrevious(day);
-    day.setNext(night);
+//    night.setPrevious(day);
+//    day.setNext(night);
     dayScheme.setTimeSlots(List.of(day, night));
 
     return dayScheme;

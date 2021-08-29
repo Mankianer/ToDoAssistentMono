@@ -13,7 +13,7 @@ public class SimpleYearSchemeGenerator {
   public YearScheme createYearScheme(int year){
     int daysOfYear = LocalDateTime.of(year, 12, 31, 12, 0).getDayOfYear();
     log.info("{} hat {} Tage?", year, daysOfYear);
-    YearScheme yearScheme = new YearScheme();
+    YearScheme yearScheme = new YearScheme(year);
     LocalDate day = LocalDate.of(year, 1, 1);
     for (int i = 0; i < daysOfYear; i++) {
       Context context = new Context(day);

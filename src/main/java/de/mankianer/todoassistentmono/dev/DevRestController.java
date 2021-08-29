@@ -7,20 +7,33 @@ import com.google.api.client.http.BasicAuthentication;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import de.mankianer.todoassistentmono.entities.models.TimeSlot;
 import de.mankianer.todoassistentmono.entities.models.YearScheme;
 import de.mankianer.todoassistentmono.planing.generators.SimpleYearSchemeGenerator;
+import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTimeTypeAdapter;
+import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTypeAdapter;
 import de.mankianer.todoassistentmono.utils.google.services.calendar.GoogleCalendarService;
 import de.mankianer.todoassistentmono.utils.google.services.GoogleService;
 import de.mankianer.todoassistentmono.utils.google.models.ClientCredential;
 import de.mankianer.todoassistentmono.repos.TimeSlotsRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.DgraphService;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.actuate.trace.http.HttpTrace.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +43,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.google.api.services.calendar.CalendarScopes;
 
@@ -48,7 +62,8 @@ public class DevRestController {
   private final TimeSlotsRepo timeSlotComponent;
 
   public DevRestController(DgraphService dgraph,
-      GoogleService googleService, GoogleCalendarService calendarService, TimeSlotsRepo timeSlotComponent) {
+      GoogleService googleService, GoogleCalendarService calendarService,
+      TimeSlotsRepo timeSlotComponent) {
     this.dgraph = dgraph;
     this.googleService = googleService;
     this.calendarService = calendarService;
@@ -84,6 +99,16 @@ public class DevRestController {
     return new SimpleYearSchemeGenerator().createYearScheme(year);
   }
 
+  @GetMapping(value = "gson/", produces = "application/json")
+  public String getGsonTest() {
+
+    return new GsonBuilder()
+                .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+                .registerTypeAdapter(LocalDateTime.class,new LocalDateTimeTypeAdapter()).create()
+              .toJson(new SimpleYearSchemeGenerator().createYearScheme(2021));
+  }
+
+
   @GetMapping("fields")
   public List<Field> getAllFields() {
     TimeSlot timeSlot = new TimeSlot();
@@ -103,7 +128,8 @@ public class DevRestController {
 
   @GetMapping("hallo")
   public String hallo(HttpServletResponse response) {
-    response.setHeader("Set-Cookie", "Authorization=Bearer+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxOTQwNTIwMzY5LCJpYXQiOjE2MjUxNjAzNjl9.HtDho41fk77VT5228Z64O1HI6oyXVsQwYxSz5d79Wkw; Max-Age=3153600; Path=/; HttpOnly; SameSite=Lax;");
+    response.setHeader("Set-Cookie",
+        "Authorization=Bearer+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxOTQwNTIwMzY5LCJpYXQiOjE2MjUxNjAzNjl9.HtDho41fk77VT5228Z64O1HI6oyXVsQwYxSz5d79Wkw; Max-Age=3153600; Path=/; HttpOnly; SameSite=Lax;");
     return "Hallo \uD83D\uDC4B";
   }
 

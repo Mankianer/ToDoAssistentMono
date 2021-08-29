@@ -15,4 +15,13 @@ public class YearSchemeRepo extends DgraphRepo<YearScheme> {
       DgraphService dgraphClientBean) {
     super(dgraphClientBean.getDgraphClient());
   }
+
+  public YearScheme save(YearScheme yearScheme) {
+
+//    yearScheme.getAllDayProfiles().stream().
+
+    yearScheme = super.saveToDGraph(yearScheme);
+
+    return yearScheme;
+  }
 }

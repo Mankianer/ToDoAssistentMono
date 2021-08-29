@@ -22,3 +22,14 @@ Content-Type: application/json
 
 GET https://localhost:8080/dev/dgraph/v
 Authorization: Bearer {{accessTokenEndless}}
+
+
+###
+GET https://localhost:8080/yearscheme/generator/2021/
+Authorization: Bearer {{accessTokenEndless}}
+
+
+###
+
+POST https://localhost:8080/yearscheme/generator/2022/save/
+Authorization: Bearer {{accessTokenEndless}}
