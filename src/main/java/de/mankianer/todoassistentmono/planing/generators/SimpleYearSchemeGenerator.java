@@ -22,6 +22,7 @@ public class SimpleYearSchemeGenerator {
       dayProfile.setPlanedDayScheme(dayProfile.planDayScheme(context));
       day = day.plusDays(1);
     }
+    yearScheme.setYear(year);
     return yearScheme;
   }
 }

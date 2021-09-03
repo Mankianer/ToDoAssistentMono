@@ -11,10 +11,8 @@ import io.dgraph.DgraphProto.Mutation;
 import io.dgraph.DgraphProto.Response;
 import io.dgraph.Transaction;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -74,39 +72,40 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   public T findByUid(String uid) {
-    String fields = "";
-    log.info(getQuerryMap());
-
-    try {
-      fields = actualTypeArgument.getDeclaredConstructor().newInstance().getAllFields().stream()
-          .map(field -> {
-            return field.getName() + "\n";
-          }).collect(Collectors.joining());
-    } catch (Exception e) {
-      log.warn(e);
-      fields = "uid";
-    }
-    String query = """
-        query findByUid($uid: string) {
-           findByUid(func: uid($uid)) {
-           """
-        + fields +
-        """
-              }
-            }""";
+    String fields = convertQueryMapToString(getQueryMap());
+    String queryname = "findByUid";
+    String query = "query " + queryname + "($uid: string) {\n"
+                    + queryname + "(func: uid($uid)) {\n"
+                    + fields +
+                      """
+                      }
+                    }""";
     Map<String, String> vars = Collections.singletonMap("$uid", uid);
     Response response = dgraphClient.newReadOnlyTransaction()
         .queryWithVars(query, vars);
 
     String json = response.getJson().toStringUtf8();
-    json = json.substring("{\"findByUid\":".length(), json.length() - 1);
-    log.info("response Json:" + json);
+    json = json.substring(("{\"" + queryname + "\":").length(), json.length() - 1);
+    log.debug("response Json:{}", json);
     T[] byUid = gson.fromJson(json, (Type) actualTypeArgument.arrayType());
 
     return byUid.length > 0 ? byUid[0] : null;
   }
 
-  private Map getQuerryMap() {
+  private String convertQueryMapToString(Map<String, Map> queryMap){
+    final String[] queryString = {""};
+    queryMap.entrySet().forEach(stringMapEntry -> {
+      queryString[0] += stringMapEntry.getKey();
+      if(stringMapEntry.getValue() != null){
+        queryString[0] += "\n{\n" +  convertQueryMapToString(stringMapEntry.getValue()) + "}";
+      }
+      queryString[0] += "\n";
+    });
+
+    return queryString[0];
+  }
+
+  private Map getQueryMap() {
     return getFieldMap(actualTypeArgument);
   }
 

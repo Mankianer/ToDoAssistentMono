@@ -26,7 +26,6 @@ public class LocalDateTypeAdapter extends TypeAdapter<LocalDate> {
   @Override
   public LocalDate read(JsonReader in) throws IOException {
     LocalDate dateTime = null;
-    in.beginObject();
     if (in.hasNext()) {
       JsonToken peek = in.peek();
       if (peek.equals(JsonToken.STRING)) {
@@ -36,7 +35,6 @@ public class LocalDateTypeAdapter extends TypeAdapter<LocalDate> {
         System.out.println("Json Token Type MissMatsch with Date: " + new Gson().toJson(in.peek()));
       }
     }
-    in.endObject();
     return dateTime;
   }
 }

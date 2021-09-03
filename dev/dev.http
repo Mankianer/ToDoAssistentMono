@@ -38,3 +38,6 @@ Authorization: Bearer {{accessTokenEndless}}
 GET https://localhost:8080/yearscheme/2021/
 Authorization: Bearer {{accessTokenEndless}}
 
+###
+GET https://localhost:8080/yearscheme/0x116d5/
+Authorization: Bearer {{accessTokenEndless}}
