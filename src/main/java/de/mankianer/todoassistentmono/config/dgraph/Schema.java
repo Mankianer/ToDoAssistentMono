@@ -3,15 +3,7 @@ package de.mankianer.todoassistentmono.config.dgraph;
 public class Schema {
 
   public static String PREDICATES = """
-      name: String @index(exact, fulltext) .
-      description: String .
-      password: Password .
-      category: uid .
-      status: uid .
-      author: uid .
-      assign: uid .
-      parent: uid .
-      next: [uid] .
+      <year>: int @index(int) .
       """;
 
   public static String TYPES = """

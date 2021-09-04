@@ -31,7 +31,7 @@ Authorization: Bearer {{accessTokenEndless}}
 
 ###
 
-POST https://localhost:8080/yearscheme/generator/2022/save/
+POST https://localhost:8080/yearscheme/generator/2021/save/
 Authorization: Bearer {{accessTokenEndless}}
 
 ###

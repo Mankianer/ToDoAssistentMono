@@ -38,11 +38,11 @@ public class DgraphService {
     dgraphClient = new DgraphClient(stub);
 
 //    log.info("Dgraph Version: " + dgraphClient.checkVersion().getTag());
-//    createSchema();
+    createSchema();
   }
 
   private void createSchema() {
-    Operation operation = Operation.newBuilder().setSchema(Schema.PREDICATES + "\n" + Schema.TYPES)
+    Operation operation = Operation.newBuilder().setSchema(Schema.PREDICATES)
         .setRunInBackground(false).build();
     dgraphClient.alter(operation);
   }
