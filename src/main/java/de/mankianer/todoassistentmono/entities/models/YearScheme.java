@@ -21,6 +21,6 @@ public class YearScheme extends DgraphEntity {
 
   private List<DayProfile> allDayProfiles = new ArrayList<>();
   @NonNull
-  private int year;
+  private Integer year;
 
 }

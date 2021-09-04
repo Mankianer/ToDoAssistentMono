@@ -9,6 +9,6 @@ public interface YearSchemeInterface {
 
   List<DayProfile> getAllDayProfiles();
 
-  int getYear();
+  Integer getYear();
 
 }

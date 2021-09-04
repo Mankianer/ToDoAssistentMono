@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -152,26 +153,26 @@ public class DgraphRepo<T extends DgraphEntity> {
     return fieldClass;
   }
 
-  public boolean deleteFromDGraph(T entity) {
-    log.error("Delete is still not Implemented!");
-    return false;
-//    Transaction txn = dgraphClient.newTransaction();
-//    try {
-//      String json = gson.toJson(entity);
-//      Mutation mutation = Mutation.newBuilder().setDeleteJson(ByteString.copyFromUtf8(json.toString()))
-//          .setCommitNow(true)
-//          .build();
-//      Response response = txn.mutate(mutation);
-//      Collection<String> uids = response.getUidsMap().values();
-//      if (uids.size() > 1) {
-//        log.warn("more than 1 uid was returned!");
-//        response.getUidsMap().forEach((k, v) -> log.warn("{}:{}", k, v));
-//      }
-//      entity.setUid(uids.stream().findFirst().orElse(null));
-//      return entity;
-//    } finally {
-//      txn.discard();
-//    }
+  public boolean deleteFromDGraphByUid(@NonNull String uid) {
+    T entity = findByUid(uid);
+    Transaction txn = dgraphClient.newTransaction();
+    try {
+      String json = gson.toJson(entity);
+      Mutation mutation = Mutation.newBuilder().setDeleteJson(ByteString.copyFromUtf8(json))
+          .setCommitNow(true)
+          .build();
+      Response response = txn.mutate(mutation);
+      Collection<String> uids = response.getUidsMap().values();
+      if (uids.size() > 1) {
+        log.warn("more than 1 uid was returned!");
+        response.getUidsMap().forEach((k, v) -> log.warn("{}:{}", k, v));
+      }
+      entity.setUid(uids.stream().findFirst().orElse(null));
+      return true;
+    } finally {
+      txn.discard();
+    }
+
 
   }
 }

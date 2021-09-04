@@ -48,9 +48,8 @@ public class YearSchemeRestController {
     return ResponseEntity.ok(yearSchemeRepo.saveToDGraph(yearScheme));
   }
 
-  @DeleteMapping("/{uid}")
+  @DeleteMapping("/{uid}/")
   public boolean delete(@PathVariable("uid") String uid) {
-    log.error("Delete is still not Implemented!");
-    return false;
+    return yearSchemeRepo.deleteFromDGraphByUid(uid);
   }
 }

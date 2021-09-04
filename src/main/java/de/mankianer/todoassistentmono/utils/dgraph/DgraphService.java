@@ -1,25 +1,18 @@
 package de.mankianer.todoassistentmono.utils.dgraph;
 
 import com.google.gson.Gson;
-import com.google.protobuf.ByteString;
 import de.mankianer.todoassistentmono.config.dgraph.Schema;
 import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphGrpc;
 import io.dgraph.DgraphGrpc.DgraphStub;
-import io.dgraph.DgraphProto.Mutation;
 import io.dgraph.DgraphProto.Operation;
-import io.dgraph.DgraphProto.Response;
-import io.dgraph.Transaction;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -64,9 +57,9 @@ public class DgraphService {
     return dgraphRepo.findByUid(uid);
   }
 
-  public <T extends DgraphEntity> boolean deleteFromDGraph(T entity) {
+  public <T extends DgraphEntity> boolean deleteFromDGraph(@NonNull String uid) {
     DgraphRepo<T> dgraphRepo = new DgraphRepo<>(getDgraphClient());
-    return dgraphRepo.deleteFromDGraph(entity);
+    return dgraphRepo.deleteFromDGraphByUid(uid);
   }
 
 
