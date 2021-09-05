@@ -29,10 +29,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
       throws ServletException, IOException {
 
-    String requestToken = request.getHeader("Authorization");
+    String requestToken = request.getHeader(JwtTokenUtil.AuthorizationHeaderName);
     if(requestToken == null && request.getCookies() != null) {
       requestToken = Arrays.stream(request.getCookies()).filter(c -> {
-        return c.getName().equals("Authorization");
+        return c.getName().equals(JwtTokenUtil.AuthorizationHeaderName);
       }).findFirst().map(c -> c.getValue().replaceFirst("\\+", " ")).orElse(null);
     }
     String username = null;

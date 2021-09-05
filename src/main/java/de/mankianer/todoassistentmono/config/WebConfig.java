@@ -1,5 +1,6 @@
 package de.mankianer.todoassistentmono.config;
 
+import de.mankianer.todoassistentmono.utils.jwt.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -13,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/**").allowCredentials(true).allowedOriginPatterns(string).allowedHeaders("*");
+    registry.addMapping("/**").allowCredentials(true).allowedOriginPatterns(string)
+        .allowedHeaders(JwtTokenUtil.AuthorizationHeaderName);
   }
 }

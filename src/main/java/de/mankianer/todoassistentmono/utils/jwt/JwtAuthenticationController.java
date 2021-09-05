@@ -53,7 +53,7 @@ public class JwtAuthenticationController {
 
 //    response.addCookie(cookie);
     response.setHeader("Set-Cookie",
-        "Authorization=Bearer+" + token + "; Max-Age=" + jwtTokenUtil.JWT_TOKEN_VALIDITY + "; Path=/; HttpOnly; SameSite=None; Secure;");
+        JwtTokenUtil.AuthorizationHeaderName + "=Bearer+" + token + "; Max-Age=" + jwtTokenUtil.JWT_TOKEN_VALIDITY + "; Path=/; HttpOnly; SameSite=None; Secure;");
 
     return ResponseEntity.ok().build();
   }
@@ -61,7 +61,7 @@ public class JwtAuthenticationController {
   @RequestMapping(value = "/token/del", method = RequestMethod.GET)
   public ResponseEntity<?> logout(HttpServletResponse response) throws Exception {
     response.setHeader("Set-Cookie",
-        "Authorization=; Max-Age=-1; Path=/; HttpOnly; SameSite=Lax; Secure;");
+        JwtTokenUtil.AuthorizationHeaderName + "=; Max-Age=-1; Path=/; HttpOnly; SameSite=Lax; Secure;");
     return ResponseEntity.accepted().build();
   }
 

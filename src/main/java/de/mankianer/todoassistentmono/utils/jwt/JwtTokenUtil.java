@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtTokenUtil {
 
+  public static String AuthorizationHeaderName = "Authorization";
+
   @Value("${JWT_TOKEN_VALIDITY}")
   public long JWT_TOKEN_VALIDITY;
 
