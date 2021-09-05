@@ -129,7 +129,7 @@ public class DevRestController {
   @GetMapping("hallo")
   public String hallo(HttpServletResponse response) {
     response.setHeader("Set-Cookie",
-        "Authorization=Bearer+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxOTQwNTIwMzY5LCJpYXQiOjE2MjUxNjAzNjl9.HtDho41fk77VT5228Z64O1HI6oyXVsQwYxSz5d79Wkw; Max-Age=3153600; Path=/; HttpOnly; SameSite=Lax;");
+        "Authorization=Bearer+eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxOTQwNTIwMzY5LCJpYXQiOjE2MjUxNjAzNjl9.HtDho41fk77VT5228Z64O1HI6oyXVsQwYxSz5d79Wkw; Max-Age=3153600; Path=/; HttpOnly; SameSite=None; Secure;");
     return "Hallo \uD83D\uDC4B";
   }
 

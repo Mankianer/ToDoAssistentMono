@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin
 @RestController
 public class JwtAuthenticationController {
 
@@ -43,7 +42,7 @@ public class JwtAuthenticationController {
   }
 
   @RequestMapping(value = "/token", method = RequestMethod.POST)
-  public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest, HttpServletResponse response) throws Exception {
+  public ResponseEntity<?> login(@RequestBody JwtRequest authenticationRequest, HttpServletResponse response) throws Exception {
 
     authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -52,16 +51,18 @@ public class JwtAuthenticationController {
 
     final String token = jwtTokenUtil.generateToken(userDetails);
 
-    Cookie cookie = new Cookie("blub", "Bearer%20" + token);
-    cookie.setPath("/");
-    cookie.setMaxAge(maxAge);
-    cookie.setHttpOnly(true);
-    cookie.setSecure(true);
 //    response.addCookie(cookie);
     response.setHeader("Set-Cookie",
-        "Authorization=Bearer+" + token + "; Max-Age=3153600; Path=/; HttpOnly; SameSite=Lax; Secure;");
+        "Authorization=Bearer+" + token + "; Max-Age=" + jwtTokenUtil.JWT_TOKEN_VALIDITY + "; Path=/; HttpOnly; SameSite=None; Secure;");
 
-    return ResponseEntity.ok(new JwtResponse(token));
+    return ResponseEntity.ok().build();
+  }
+
+  @RequestMapping(value = "/token/del", method = RequestMethod.GET)
+  public ResponseEntity<?> logout(HttpServletResponse response) throws Exception {
+    response.setHeader("Set-Cookie",
+        "Authorization=; Max-Age=-1; Path=/; HttpOnly; SameSite=Lax; Secure;");
+    return ResponseEntity.accepted().build();
   }
 
 
