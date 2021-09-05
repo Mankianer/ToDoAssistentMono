@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
-class DGraphQueryUtilesTest {
+class DGraphQueryUtilsTest {
 
   @Test
   public void testCreateFindByValueQuery() throws NoSuchFieldException {
@@ -45,19 +45,19 @@ class DGraphQueryUtilesTest {
         }
         }""";
     assertEquals(findByValueQuery,
-        DGraphQueryUtiles.createFindByValueQuery("year", "year", YearScheme.class)
+        DGraphQueryUtils.createFindByValueQuery("year", "year", YearScheme.class)
             .buildQueryString());
   }
 
   @Test
   public void testFindDGraphType() {
-    assertEquals(DGraphType.INT, DGraphQueryUtiles.findDGraphType(Integer.class));
-    assertEquals(DGraphType.FLOAT, DGraphQueryUtiles.findDGraphType(Float.class));
-    assertEquals(DGraphType.FLOAT, DGraphQueryUtiles.findDGraphType(Double.class));
-    assertEquals(DGraphType.BOOLEAN, DGraphQueryUtiles.findDGraphType(Boolean.class));
-    assertEquals(DGraphType.DATETIME, DGraphQueryUtiles.findDGraphType(LocalDateTime.class));
-    assertEquals(DGraphType.DATETIME, DGraphQueryUtiles.findDGraphType(LocalDate.class));
-    assertEquals(DGraphType.DEFAULT, DGraphQueryUtiles.findDGraphType(getClass()));
+    assertEquals(DGraphType.INT, DGraphQueryUtils.findDGraphType(Integer.class));
+    assertEquals(DGraphType.FLOAT, DGraphQueryUtils.findDGraphType(Float.class));
+    assertEquals(DGraphType.FLOAT, DGraphQueryUtils.findDGraphType(Double.class));
+    assertEquals(DGraphType.BOOLEAN, DGraphQueryUtils.findDGraphType(Boolean.class));
+    assertEquals(DGraphType.DATETIME, DGraphQueryUtils.findDGraphType(LocalDateTime.class));
+    assertEquals(DGraphType.DATETIME, DGraphQueryUtils.findDGraphType(LocalDate.class));
+    assertEquals(DGraphType.DEFAULT, DGraphQueryUtils.findDGraphType(getClass()));
   }
 
 }

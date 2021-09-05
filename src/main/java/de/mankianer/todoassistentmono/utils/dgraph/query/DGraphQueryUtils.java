@@ -13,8 +13,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DGraphQueryUtiles {
+public class DGraphQueryUtils {
 
+  /**
+   * creates a DQuery-Object based on a Class of DgraphEntity
+   * @param filedName of the Object
+   * @param paramName
+   * @param actualTypeArgument
+   * @return
+   * @throws NoSuchFieldException if fieldName is not a DeclaredField of actualType
+   */
   public static DQuery createFindByValueQuery(String filedName, String paramName,
       Class<? extends DgraphEntity> actualTypeArgument)
       throws NoSuchFieldException {
@@ -24,6 +32,11 @@ public class DGraphQueryUtiles {
             RootTypes.EQUALS).build();
   }
 
+  /**
+   * Maps a Class<?> to a DGraphType for Query
+   * @param clazz
+   * @return
+   */
   public static DGraphType findDGraphType(Class<?> clazz) {
     if (clazz.equals(Integer.class)) {
       return DGraphType.INT;
@@ -37,6 +50,11 @@ public class DGraphQueryUtiles {
     return DGraphType.DEFAULT;
   }
 
+  /**
+   *
+   * @param queryMap
+   * @return
+   */
   public static String convertQueryMapToField(Map<String, Map> queryMap) {
     final String[] queryString = {""};
     queryMap.entrySet().forEach(stringMapEntry -> {
@@ -50,6 +68,11 @@ public class DGraphQueryUtiles {
     return queryString[0];
   }
 
+  /**
+   * gets Class of a Class-Field if it's a List it returns the Type of the List.
+   * @param field
+   * @return correct Type of DgraphEntity Field of Object or List
+   */
   public static Class<?> convertFieldToClass(Field field) {
     Class<?> fieldClass = field.getType();
     if (field.getType().equals(List.class)) {
@@ -59,6 +82,12 @@ public class DGraphQueryUtiles {
     return fieldClass;
   }
 
+  /**
+   * Mapping the Fields of a DgraphEntity for Query in a treeLike Map.
+   * Ignorse Fileds with @JsonIgnore annotation.
+   * @param clazz
+   * @return Map<S, Map<S, Map<S, ...>>> if Key is not null it is a DgraphEntity
+   */
   public static Map<String, Map> getFieldMap(Class<? extends DgraphEntity> clazz) {
     HashMap<String, Map> fieldMap = new HashMap<>();
     try {

@@ -6,7 +6,7 @@ import com.google.protobuf.ByteString;
 import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTimeTypeAdapter;
 import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTypeAdapter;
-import de.mankianer.todoassistentmono.utils.dgraph.query.DGraphQueryUtiles;
+import de.mankianer.todoassistentmono.utils.dgraph.query.DGraphQueryUtils;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DGraphType;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DQuery;
 import io.dgraph.DgraphClient;
@@ -71,7 +71,7 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   public T findByUid(String uid) {
-    String fields = DGraphQueryUtiles.convertQueryMapToField(getQueryMap());
+    String fields = DGraphQueryUtils.convertQueryMapToField(getQueryMap());
     String queryname = "findByUid";
     String queryfunctionname = queryname;
     String query = "query " + queryname + "($uid: string) {\n"
@@ -102,7 +102,7 @@ public class DgraphRepo<T extends DgraphEntity> {
 //        """
 //              }
 //            }""";
-    DQuery findByValueQuery = DGraphQueryUtiles.createFindByValueQuery(name, name,
+    DQuery findByValueQuery = DGraphQueryUtils.createFindByValueQuery(name, name,
         actualTypeArgument);
     Map<String, String> vars = Collections.singletonMap("$" + name, value);
     Response response = dgraphClient.newReadOnlyTransaction()
@@ -117,7 +117,7 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   private Map getQueryMap() {
-    return DGraphQueryUtiles.getFieldMap(actualTypeArgument);
+    return DGraphQueryUtils.getFieldMap(actualTypeArgument);
   }
 
   public boolean deleteFromDGraphByUid(@NonNull String uid) {

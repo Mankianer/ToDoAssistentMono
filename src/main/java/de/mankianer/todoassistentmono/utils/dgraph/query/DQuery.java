@@ -1,11 +1,6 @@
 package de.mankianer.todoassistentmono.utils.dgraph.query;
 
 import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,12 +31,12 @@ public class DQuery {
             .build()).build();
     return "query " + queryname + "($" + paramName + ": " + paramType.name() + " ) {\n" +
         function.buildFunctionString() + " {\n" +
-        DGraphQueryUtiles.convertQueryMapToField(getQueryMap()) +
+        DGraphQueryUtils.convertQueryMapToField(getQueryMap()) +
         "}\n}";
   }
 
   private Map getQueryMap() {
-    return DGraphQueryUtiles.getFieldMap(actualTypeArgument);
+    return DGraphQueryUtils.getFieldMap(actualTypeArgument);
   }
 
 }
