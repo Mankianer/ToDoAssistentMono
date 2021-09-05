@@ -37,7 +37,7 @@ public class DQuery {
     return "query " + queryname + "($" + paramName + ": " + paramType.name() + " ) {\n" +
         function.buildFunctionString() + " {\n" +
         DGraphQueryUtiles.convertQueryMapToField(getQueryMap()) +
-        "\n}\n}";
+        "}\n}";
   }
 
   private Map getQueryMap() {

@@ -15,24 +15,24 @@ import java.util.Map;
 
 public class DGraphQueryUtiles {
 
-  public static DQuery createFindByValueQuery(String filedName, String paramName, Class<? extends DgraphEntity> actualTypeArgument)
+  public static DQuery createFindByValueQuery(String filedName, String paramName,
+      Class<? extends DgraphEntity> actualTypeArgument)
       throws NoSuchFieldException {
     return DQuery.builder().queryname("findByValue").functionName("findByValue")
         .actualTypeArgument(actualTypeArgument).fieldName(filedName).paramName(paramName)
-        .paramType(findDGraphType(actualTypeArgument.getField(filedName).getType())).rootFilter(
+        .paramType(findDGraphType(actualTypeArgument.getDeclaredField(filedName).getType())).rootFilter(
             RootTypes.EQUALS).build();
   }
 
-  public static DGraphType findDGraphType(Type type) {
-    if (type.getTypeName().equals(Integer.class.getTypeName())) {
+  public static DGraphType findDGraphType(Class<?> clazz) {
+    if (clazz.equals(Integer.class)) {
       return DGraphType.INT;
-    } else if (type.getTypeName().equals(Float.class.getTypeName())) {
+    } else if (clazz.equals(Float.class) || clazz.equals(Double.class)) {
       return DGraphType.FLOAT;
-    } else if (type.getTypeName().equals(LocalDateTime.class.getTypeName()) || type.getTypeName()
-        .equals(LocalDate.class.getTypeName())) {
-      return DGraphType.DATETIME;
-    } else if (type.getTypeName().equals(Boolean.class.getTypeName())) {
+    } else if (clazz.equals(Boolean.class)) {
       return DGraphType.BOOLEAN;
+    } else if (clazz.equals(LocalDateTime.class) || clazz.equals(LocalDate.class)) {
+      return DGraphType.DATETIME;
     }
     return DGraphType.DEFAULT;
   }
