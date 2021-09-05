@@ -29,7 +29,7 @@ public class DQuery {
     DQueryFunction function = DQueryFunction.builder().functionName(functionName).queryRootFilter(
         DQueryRootFilter.builder().fieldName(fieldName).paramName(paramName).rootTypes(rootFilter)
             .build()).build();
-    return "query " + queryname + "($" + paramName + ": " + paramType.name() + " ) {\n" +
+    return "query " + queryname + "($" + paramName + ": " + paramType.name + " ) {\n" +
         function.buildFunctionString() + " {\n" +
         DGraphQueryUtils.convertQueryMapToField(getQueryMap()) +
         "}\n}";

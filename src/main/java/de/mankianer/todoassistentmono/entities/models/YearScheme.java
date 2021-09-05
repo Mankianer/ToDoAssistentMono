@@ -1,5 +1,6 @@
 package de.mankianer.todoassistentmono.entities.models;
 
+import com.google.appengine.repackaged.org.codehaus.jackson.annotate.JsonIgnore;
 import de.mankianer.todoassistentmono.entities.interfaces.DayProfileInterface;
 import de.mankianer.todoassistentmono.entities.interfaces.YearSchemeInterface;
 import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
@@ -22,5 +23,8 @@ public class YearScheme extends DgraphEntity {
   private List<DayProfile> allDayProfiles = new ArrayList<>();
   @NonNull
   private Integer year;
+
+  @JsonIgnore
+  private boolean overwriteFlag;
 
 }

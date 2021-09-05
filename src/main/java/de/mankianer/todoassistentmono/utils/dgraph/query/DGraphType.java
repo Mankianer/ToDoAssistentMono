@@ -9,7 +9,7 @@ public enum DGraphType {
   GEO("geo"),
   BOOLEAN("bool");
 
-  private String name;
+  public String name;
 
   private DGraphType(String name) {
     this.name = name;

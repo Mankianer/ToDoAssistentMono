@@ -31,8 +31,22 @@ public class YearSchemeRepo extends DgraphRepo<YearScheme> {
     return findByValue("year", "" + year, DGraphType.STRING);
   }
 
+  /**
+   * Only one YearScheme per Year.
+   * Only saves YearScheme if no other or overwriteFlag is set
+   * @param entity
+   * @return saved entity or if other found other will returned
+   */
   @Override
   public YearScheme saveToDGraph(YearScheme entity) {
+    YearScheme other = findByYear(entity.getYear());
+    if(other != null && entity.isOverwriteFlag()){
+      deleteFromDGraphByUid(other.getUid());
+      other = null;
+    }
+    if(other != null) {
+      return other;
+    }
     return super.saveToDGraph(entity);
   }
 }

@@ -12,7 +12,7 @@ class DGraphQueryUtilsTest {
   @Test
   public void testCreateFindByValueQuery() throws NoSuchFieldException {
     String findByValueQuery = """
-        query findByValue($year: INT ) {
+        query findByValue($year: int ) {
         findByValue (func: eq(year, $year)) {
         uid
         year
