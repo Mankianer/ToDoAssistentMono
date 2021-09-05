@@ -27,6 +27,11 @@ public class YearSchemeRestController {
     this.yearSchemeRepo = yearSchemeRepo;
   }
 
+  @GetMapping("/y{year}/")
+  public YearScheme getByYear(@PathVariable("year") int year) {
+    return yearSchemeRepo.findByYear(year);
+  }
+
   @GetMapping("/{uid}/")
   public YearScheme getByUid(@PathVariable("uid") String uid) {
     return yearSchemeRepo.findByUid(uid);

@@ -35,7 +35,7 @@ POST https://localhost:8080/yearscheme/generator/2021/save/
 Authorization: Bearer {{accessTokenEndless}}
 
 ###
-GET https://localhost:8080/yearscheme/2021/
+GET https://localhost:8080/yearscheme/y2021/
 Authorization: Bearer {{accessTokenEndless}}
 
 ###

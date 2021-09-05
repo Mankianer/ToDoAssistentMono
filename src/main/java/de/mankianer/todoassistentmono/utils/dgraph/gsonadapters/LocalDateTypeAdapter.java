@@ -29,8 +29,7 @@ public class LocalDateTypeAdapter extends TypeAdapter<LocalDate> {
     if (in.hasNext()) {
       JsonToken peek = in.peek();
       if (peek.equals(JsonToken.STRING)) {
-        dateTime = LocalDate.from(
-            DateTimeFormatter.ISO_LOCAL_DATE.parse(in.nextString()));
+        dateTime = LocalDate.parse(in.nextString(), DateTimeFormatter.ISO_LOCAL_DATE);
       } else {
         System.out.println("Json Token Type MissMatsch with Date: " + new Gson().toJson(in.peek()));
       }
