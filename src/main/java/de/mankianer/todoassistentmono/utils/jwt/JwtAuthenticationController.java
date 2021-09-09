@@ -42,7 +42,7 @@ public class JwtAuthenticationController {
   }
 
   @RequestMapping(value = "/token", method = RequestMethod.POST)
-  public ResponseEntity<?> login(@RequestBody JwtRequest authenticationRequest, HttpServletResponse response) throws Exception {
+  public void login(@RequestBody JwtRequest authenticationRequest, HttpServletResponse response) throws Exception {
 
     authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
 
@@ -54,8 +54,6 @@ public class JwtAuthenticationController {
 //    response.addCookie(cookie);
     response.setHeader("Set-Cookie",
         JwtTokenUtil.AuthorizationHeaderName + "=Bearer+" + token + "; Max-Age=" + jwtTokenUtil.JWT_TOKEN_VALIDITY + "; Path=/; HttpOnly; SameSite=None; Secure;");
-
-    return ResponseEntity.ok().build();
   }
 
   @RequestMapping(value = "/token/del", method = RequestMethod.GET)

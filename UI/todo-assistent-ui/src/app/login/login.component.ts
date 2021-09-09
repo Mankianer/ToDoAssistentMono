@@ -19,7 +19,8 @@ export class LoginComponent implements OnInit {
 
   login(username: string, password: string) {
     console.log('username:' + username);
-    this.http.post(this.loginUrl, {username: username, password: password}).toPromise()
+
+    this.http.post(this.loginUrl, {username: username, password: password}, {withCredentials: true}).toPromise()
     .then(value => console.log('login successful'))
     .catch(error => console.log('login error: ' + error));
   }

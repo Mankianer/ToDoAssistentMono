@@ -16,7 +16,7 @@ export class DevComponent implements OnInit {
   }
 
   async isLogin(): Promise<string> {
-    return this.http.get<string>("https://localhost:8080/dev/isLogin").toPromise();
+    return this.http.get<string>("https://localhost:8080/dev/islogin", {withCredentials: true}).toPromise();
   }
 
 }

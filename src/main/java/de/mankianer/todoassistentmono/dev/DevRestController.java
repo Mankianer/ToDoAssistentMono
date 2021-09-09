@@ -48,7 +48,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.api.services.calendar.CalendarScopes;
 
 @Log4j2
-@CrossOrigin
 @RestController()
 @RequestMapping("/dev/")
 public class DevRestController {
