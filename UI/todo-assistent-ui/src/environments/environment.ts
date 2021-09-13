@@ -5,7 +5,9 @@
 export const environment = {
   production: false,
   apiUrl: 'https://localhost:8080',
-  loginPath: '/token'
+  loginPath: '/token/',
+  logoutPath: '/token/del',
+  isloggedInPath: '/token/valid',
 };
 
 /*

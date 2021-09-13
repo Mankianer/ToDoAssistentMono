@@ -18,6 +18,7 @@ import {MatCardModule} from "@angular/material/card";
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {RedirectHttpInterceptor} from "./RedirectHttpInterceptor";
 import { DevComponent } from './dev/dev.component';
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { DevComponent } from './dev/dev.component';
     MatFormFieldModule,
     MatInputModule,
     MatCardModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSnackBarModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,

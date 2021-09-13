@@ -1,6 +1,8 @@
-<mat-card>
+<mat-card *ngIf="!isLoggedIn">
   <mat-card-header>
-    <mat-card-title>Login</mat-card-title>
+    <mat-card-title>
+      <span>Login</span>
+    </mat-card-title>
   </mat-card-header>
   <mat-card-content>
     <mat-form-field appearance="fill">
@@ -21,4 +23,17 @@
     <button mat-raised-button color="primary" (click)="login(username.value, password.value)">login</button>
   </mat-card-actions>
 </mat-card>
+<!--Logout-->
+<mat-card *ngIf="isLoggedIn">
+  <mat-card-header>
+    <mat-card-title>
+      <span>Logout</span>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
 
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" (click)="logout()">logout</button>
+  </mat-card-actions>
+</mat-card>
