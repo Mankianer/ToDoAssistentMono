@@ -8,8 +8,9 @@ import java.time.LocalDateTime;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class SimpleYearSchemeGenerator {
+public class SimpleYearSchemeGenerator implements YearSchemeGenerator{
 
+  @Override
   public YearScheme createYearScheme(int year){
     int daysOfYear = LocalDateTime.of(year, 12, 31, 12, 0).getDayOfYear();
     log.info("{} hat {} Tage?", year, daysOfYear);
@@ -24,5 +25,10 @@ public class SimpleYearSchemeGenerator {
     }
     yearScheme.setYear(year);
     return yearScheme;
+  }
+
+  @Override
+  public String getName() {
+    return "SimpleYearSchemeGenerator";
   }
 }
