@@ -9,10 +9,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * A Condition witch is ruled via JavaScript
  */
+@Log4j2
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -24,7 +26,7 @@ public class JSCondition extends DgraphEntity implements Condition {
   private String name, script;
 
   @Override
-  public boolean evaluate(ConditionContext context) {
+  public boolean evaluate(ConditionContext context) throws ConditionException {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
     try {
       engine.eval("function " + functionName + "(context) {\n" +
@@ -33,9 +35,15 @@ public class JSCondition extends DgraphEntity implements Condition {
       functionName = "isTrue";
       Boolean aBoolean = (Boolean) ((Invocable) engine).invokeFunction(functionName, context);
       return aBoolean;
-    } catch (ScriptException | NoSuchMethodException e) {
-      e.printStackTrace();
+    } catch (ScriptException e) {
+      throw new ConditionException("Script Error", e);
+    } catch (NoSuchMethodException e) {
+      throw new ConditionException("Internal Error caused by Script", e);
+    } catch (NullPointerException e) {
+      if( ("" + script).isBlank() ) throw new ConditionException("Script is Empty", e);
+      throw new ConditionException("Internal Error caused by Script", e);
+    } catch (Exception e) {
+      throw new ConditionException("Unknown Error", e);
     }
-    return false;
   }
 }
