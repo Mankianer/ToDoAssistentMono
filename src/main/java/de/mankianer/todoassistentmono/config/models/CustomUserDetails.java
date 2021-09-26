@@ -3,16 +3,16 @@ package de.mankianer.todoassistentmono.config.models;
 import java.util.Collection;
 import java.util.List;
 import lombok.Data;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Data
 @RequiredArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class CustomUserDetails implements UserDetails {
 
   @NonNull

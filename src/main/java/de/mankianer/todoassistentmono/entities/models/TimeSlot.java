@@ -5,6 +5,7 @@ import de.mankianer.todoassistentmono.entities.interfaces.CalendarEntryInterface
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class TimeSlot extends DgraphEntity {
 
   @NonNull

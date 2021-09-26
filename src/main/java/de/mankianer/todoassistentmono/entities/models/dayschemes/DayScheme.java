@@ -6,6 +6,7 @@ import de.mankianer.todoassistentmono.entities.models.TimeSlot;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class DayScheme extends DgraphEntity {
 
   private List<TimeSlot> timeSlots;

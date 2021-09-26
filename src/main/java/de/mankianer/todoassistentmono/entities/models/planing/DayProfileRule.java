@@ -6,12 +6,14 @@ import de.mankianer.todoassistentmono.entities.models.planing.condition.Conditio
 import de.mankianer.todoassistentmono.entities.models.planing.condition.ConditionException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Default DayProfileRule for access DGraphObject.
  */
 @Data
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class DayProfileRule {
 
   private int prio;

@@ -5,11 +5,13 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * Default DgraphEntity for access DGraphObject.
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class DgraphEntity {
 
   private String uid;

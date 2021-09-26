@@ -5,6 +5,7 @@ import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class YearSchemeGeneratorConfig extends DgraphEntity {
 
   private List<DayProfileRule> dayProfileRules;
