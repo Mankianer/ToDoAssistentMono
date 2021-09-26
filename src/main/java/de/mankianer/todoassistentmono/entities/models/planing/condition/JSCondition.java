@@ -27,6 +27,17 @@ public class JSCondition extends DgraphEntity implements Condition {
   @NonNull
   private String name, script;
 
+  /**
+   *
+   * @param context
+   * @return
+   * @throws ConditionException
+   * rootException Map:
+   *  ScriptException = Script Error
+   *  NoSuchMethodException = Script Error with semantic-problems
+   *  NullPointerException = Blank Script
+   *  Exception = Unknown Error
+   */
   @Override
   public boolean evaluate(ConditionContext context) throws ConditionException {
     ScriptEngine engine = new ScriptEngineManager().getEngineByName("graal.js");
