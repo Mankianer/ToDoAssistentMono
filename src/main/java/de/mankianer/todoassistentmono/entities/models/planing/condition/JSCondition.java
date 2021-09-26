@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * A Condition witch is ruled via JavaScript
+ */
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -28,11 +31,11 @@ public class JSCondition extends DgraphEntity implements Condition {
           script +
           "\n}");
       functionName = "isTrue";
-      boolean funcResult = (boolean) ((Invocable) engine).invokeFunction(functionName, context);
+      Boolean aBoolean = (Boolean) ((Invocable) engine).invokeFunction(functionName, context);
+      return aBoolean;
     } catch (ScriptException | NoSuchMethodException e) {
       e.printStackTrace();
     }
-
     return false;
   }
 }

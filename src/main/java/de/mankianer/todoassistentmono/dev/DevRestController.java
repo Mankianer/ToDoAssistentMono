@@ -41,6 +41,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Dev RestEndpoint for develop purpose
+ */
 @Log4j2
 @RestController()
 @RequestMapping("/dev/")
@@ -134,6 +137,11 @@ public class DevRestController {
     return "ok";
   }
 
+  /**
+   * returns a Cookie with an unlimited Dev-JWT-Token
+   * @param response
+   * @return
+   */
   @GetMapping("hallo")
   public String hallo(HttpServletResponse response) {
     response.setHeader("Set-Cookie",

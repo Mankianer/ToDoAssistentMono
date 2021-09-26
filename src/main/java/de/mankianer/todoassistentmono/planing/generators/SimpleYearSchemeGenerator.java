@@ -1,6 +1,6 @@
 package de.mankianer.todoassistentmono.planing.generators;
 
-import de.mankianer.todoassistentmono.entities.models.Context;
+import de.mankianer.todoassistentmono.entities.models.DayContext;
 import de.mankianer.todoassistentmono.entities.models.YearScheme;
 import de.mankianer.todoassistentmono.entities.models.dayprofiles.SimpleDayProfile;
 import java.time.LocalDate;
@@ -17,7 +17,7 @@ public class SimpleYearSchemeGenerator implements YearSchemeGenerator{
     YearScheme yearScheme = new YearScheme(year);
     LocalDate day = LocalDate.of(year, 1, 1);
     for (int i = 0; i < daysOfYear; i++) {
-      Context context = new Context(day);
+      DayContext context = new DayContext(day);
       SimpleDayProfile dayProfile = new SimpleDayProfile();
       yearScheme.getAllDayProfiles().add(dayProfile);
       dayProfile.setPlanedDayScheme(dayProfile.planDayScheme(context));

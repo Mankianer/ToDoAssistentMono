@@ -1,10 +1,8 @@
 package de.mankianer.todoassistentmono.rest.yearscheme;
 
-import de.mankianer.todoassistentmono.entities.models.TimeSlot;
 import de.mankianer.todoassistentmono.entities.models.YearScheme;
 import de.mankianer.todoassistentmono.repos.YearSchemeRepo;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,7 +46,7 @@ public class YearSchemeRestController {
   @PutMapping("/")
   public ResponseEntity update(@RequestBody YearScheme yearScheme) {
     if (yearScheme.getUid() == null) {
-      return ResponseEntity.badRequest().body("Use POST to update!");
+      return ResponseEntity.badRequest().body("Use POST to create!");
     }
     return ResponseEntity.ok(yearSchemeRepo.saveToDGraph(yearScheme));
   }

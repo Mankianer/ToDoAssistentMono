@@ -3,10 +3,12 @@ package de.mankianer.todoassistentmono.entities.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import lombok.Data;
 
+/**
+ * Default DgraphEntity for access DGraphObject.
+ */
 @Data
 public class DgraphEntity {
 

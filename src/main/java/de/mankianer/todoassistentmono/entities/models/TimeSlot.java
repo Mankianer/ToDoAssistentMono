@@ -1,12 +1,7 @@
 package de.mankianer.todoassistentmono.entities.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import de.mankianer.todoassistentmono.entities.interfaces.CalendarEntryInterface;
-import de.mankianer.todoassistentmono.entities.interfaces.TimeSlotInterface;
-import de.mankianer.todoassistentmono.entities.interfaces.ToDoFilterInterface;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +9,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Default TimeSlot for access DGraphObject.
+ * TimeSlot for selecting ToDos
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

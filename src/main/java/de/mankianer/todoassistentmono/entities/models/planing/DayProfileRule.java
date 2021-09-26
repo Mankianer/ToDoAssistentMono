@@ -6,6 +6,9 @@ import de.mankianer.todoassistentmono.entities.models.planing.condition.Conditio
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+/**
+ * Default DayProfileRule for access DGraphObject.
+ */
 @Data
 @AllArgsConstructor
 public class DayProfileRule {

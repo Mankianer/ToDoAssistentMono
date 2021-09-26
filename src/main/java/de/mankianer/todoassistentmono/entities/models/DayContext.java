@@ -1,17 +1,18 @@
 package de.mankianer.todoassistentmono.entities.models;
 
-import de.mankianer.todoassistentmono.entities.interfaces.ContextInterface;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
+/**
+ * Default DayContext for access DGraphObject.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Context extends DgraphEntity {
+public class DayContext extends DgraphEntity {
 
   @NonNull
   private LocalDate date;

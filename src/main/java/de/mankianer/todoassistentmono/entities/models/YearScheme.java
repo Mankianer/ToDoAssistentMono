@@ -1,19 +1,19 @@
 package de.mankianer.todoassistentmono.entities.models;
 
 import com.google.appengine.repackaged.org.codehaus.jackson.annotate.JsonIgnore;
-import de.mankianer.todoassistentmono.entities.interfaces.DayProfileInterface;
-import de.mankianer.todoassistentmono.entities.interfaces.YearSchemeInterface;
 import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Default YearScheme for access DGraphObject.
+ * Starting point save the planing.
+ */
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor

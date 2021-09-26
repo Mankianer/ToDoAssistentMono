@@ -7,6 +7,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Default YearSchemeGeneratorConfig for access DGraphObject.
+ * Listing of DayProfileRules and a default DayProfile in case of negation of all rules.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
