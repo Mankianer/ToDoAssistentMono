@@ -1,9 +1,9 @@
 package de.mankianer.todoassistentmono.entities.models.planing;
 
 import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
-import de.mankianer.todoassistentmono.entities.models.planing.condition.Condition;
-import de.mankianer.todoassistentmono.entities.models.planing.condition.ConditionContext;
-import de.mankianer.todoassistentmono.entities.models.planing.condition.ConditionException;
+import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileConditionContext;
+import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileConditionException;
+import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileConditionInterface;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,10 +18,10 @@ public class DayProfileRule {
 
   private int prio;
   private DayProfile dayProfile;
-  private Condition condition;
+  private DayProfileConditionInterface dayProfileCondition;
 
-  public boolean evaluate() throws ConditionException {
-    return condition.evaluate(new ConditionContext());
+  public boolean evaluate() throws DayProfileConditionException {
+    return dayProfileCondition.evaluate(new DayProfileConditionContext());
   }
 
 }

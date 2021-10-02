@@ -1,0 +1,26 @@
+package de.mankianer.todoassistentmono.planing;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.google.gson.Gson;
+import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ParameterType;
+import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.JSDayProfileCondition;
+import de.mankianer.todoassistentmono.utils.dgraph.DgraphService;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+class DayProfileConditionControllerTest {
+
+  @Test
+  void getConditionParameterMap() {
+    DgraphService dgraphService = Mockito.mock(DgraphService.class);
+    DayProfileConditionController dayProfileConditionController = new DayProfileConditionController(dgraphService);
+    dayProfileConditionController.register(JSDayProfileCondition.class);
+    String s = new Gson().toJson(dayProfileConditionController.getConditionParameterMap());
+
+    assertThat(dayProfileConditionController.getConditionParameterMap()).usingRecursiveComparison()
+        .isEqualTo(Map.of("JSDayProfileCondition", Map.of("script",
+            ParameterType.STRING, "name", ParameterType.STRING)));
+  }
+}

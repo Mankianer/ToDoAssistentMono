@@ -12,7 +12,6 @@ import io.grpc.ManagedChannelBuilder;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -47,12 +46,12 @@ public class DgraphService {
     dgraphClient.alter(operation);
   }
 
-  public <T extends DgraphEntity> T saveToDGraph(T entity) {
+  public <T extends DgraphEntity> T saveToDGraph(@NonNull T entity) {
     DgraphRepo<T> dgraphRepo = new DgraphRepo<>(getDgraphClient());
     return dgraphRepo.saveToDGraph(entity);
   }
 
-  public <T extends DgraphEntity> T findByUid(String uid) {
+  public <T extends DgraphEntity> T findByUid(@NonNull String uid) {
     DgraphRepo<T> dgraphRepo = new DgraphRepo<>(getDgraphClient());
     return dgraphRepo.findByUid(uid);
   }

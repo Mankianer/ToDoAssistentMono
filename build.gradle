@@ -34,6 +34,8 @@ dependencies {
     implementation group: 'org.graalvm.js', name: 'js', version: '21.2.0'
     // https://mvnrepository.com/artifact/org.graalvm.js/js-scriptengine
     implementation group: 'org.graalvm.js', name: 'js-scriptengine', version: '21.2.0'
+    // https://mvnrepository.com/artifact/org.javatuples/javatuples
+    implementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
 
     // https://mvnrepository.com/artifact/com.google.api-client/google-api-client-appengine
     implementation group: 'com.google.api-client', name: 'google-api-client-appengine', version: '1.32.1'
@@ -43,6 +45,13 @@ dependencies {
     implementation group: 'com.google.appengine', name: 'appengine-api-1.0-sdk', version: '1.9.91'
     // https://mvnrepository.com/artifact/com.google.apis/google-api-services-calendar
     implementation group: 'com.google.apis', name: 'google-api-services-calendar', version: 'v3-rev411-1.25.0'
+
+    // https://mvnrepository.com/artifact/org.mockito/mockito-core
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.21.0'
+
+
 
 
 //    // https://mvnrepository.com/artifact/com.github.caldav4j/caldav4j
