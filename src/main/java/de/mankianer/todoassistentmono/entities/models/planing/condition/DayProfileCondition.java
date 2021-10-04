@@ -1,22 +1,21 @@
 package de.mankianer.todoassistentmono.entities.models.planing.condition;
 
-import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
+import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.javatuples.Triplet;
 
 @Log4j2
 @Data
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public abstract class DayProfileCondition extends DgraphEntity implements
+public abstract class DayProfileCondition extends DgraphMultiClassEntity implements
     DayProfileConditionInterface {
+
 
   public static Integer getIntegerFromNumber(String name, Map<String, ?> values) {
     Object ret = values.get(name);

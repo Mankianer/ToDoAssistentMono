@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.protobuf.ByteString;
 import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
+import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTimeTypeAdapter;
 import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTypeAdapter;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DGraphQueryUtils;
@@ -19,16 +20,25 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class DgraphRepo<T extends DgraphEntity> {
 
+  private static Map<Class<? extends DgraphMultiClassEntity>, Function<String, Class<? extends DgraphMultiClassEntity>>> resolverMap = new HashMap<>();
+
   private final Class<T> actualTypeArgument;
   private DgraphClient dgraphClient;
   private Gson gson;
+
+  public static <S extends DgraphMultiClassEntity> void registerMultiCastEntityResolver(
+      Class<S> parent, Function<String, Class<? extends DgraphMultiClassEntity>> resolver) {
+    resolverMap.put(parent, resolver);
+  }
 
   public DgraphRepo(DgraphClient dgraphClient) {
     this.dgraphClient = dgraphClient;
@@ -71,7 +81,7 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   public T findByUid(String uid) {
-    String fields = DGraphQueryUtils.convertQueryMapToField(getQueryMap());
+    String fields = DGraphQueryUtils.convertQueryMapToField(getQueryMap());//TODO auf DgraphMultiEntity umstellen
     String queryname = "findByUid";
     String queryfunctionname = queryname;
     String query = "query " + queryname + "($uid: string) {\n"
@@ -109,7 +119,8 @@ public class DgraphRepo<T extends DgraphEntity> {
         .queryWithVars(findByValueQuery.buildQueryString(), vars);
 
     String json = response.getJson().toStringUtf8();
-    json = json.substring(("{\"" + findByValueQuery.getFunctionName() + "\":").length(), json.length() - 1);
+    json = json.substring(("{\"" + findByValueQuery.getFunctionName() + "\":").length(),
+        json.length() - 1);
     log.debug("response Json:{}", json);
     T[] byUid = gson.fromJson(json, (Type) actualTypeArgument.arrayType());
 

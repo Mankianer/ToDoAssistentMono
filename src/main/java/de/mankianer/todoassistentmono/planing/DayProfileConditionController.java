@@ -4,6 +4,7 @@ import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfi
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ParameterType;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.DayOfMonthDayProfileCondition;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.JSDayProfileCondition;
+import de.mankianer.todoassistentmono.utils.dgraph.DgraphRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.DgraphService;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class DayProfileConditionController {
   private final DgraphService dgraphService;
 
   public DayProfileConditionController(DgraphService dgraphService) {
+    DgraphRepo.registerMultiCastEntityResolver(DayProfileCondition.class, this::resolve);
     dayProfileConditionMap = new HashMap<>();
     this.dgraphService = dgraphService;
   }
