@@ -1,11 +1,9 @@
 package de.mankianer.todoassistentmono.utils.dgraph.query;
 
 import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
-import de.mankianer.todoassistentmono.utils.dgraph.DgraphRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryRootFilter.RootTypes;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -26,11 +24,27 @@ public class DGraphQueryUtils {
   public static DQuery createFindByValueQuery(String filedName, String paramName,
       Class<? extends DgraphEntity> actualTypeArgument)
       throws NoSuchFieldException {
+    return createFindByValueQuery(filedName, paramName, actualTypeArgument, getFieldMap(actualTypeArgument));
+  }
+
+  public static DQuery createFindByValueQuery(String filedName, String paramName,
+      Class<? extends DgraphEntity> actualTypeArgument, Map<String, Map> queryMap)
+      throws NoSuchFieldException {
     return DQuery.builder().queryname("findByValue").functionName("findByValue")
-        .actualTypeArgument(actualTypeArgument).fieldName(filedName).paramName(paramName)
+        .actualTypeArgument(actualTypeArgument).fieldName(filedName).paramName(paramName).queryMap(queryMap)
         .paramType(findDGraphType(actualTypeArgument.getDeclaredField(filedName).getType())).rootFilter(
             RootTypes.EQUALS).build();
   }
+
+  public static String createQueryString(String fields, String queryname, String queryfunctionname) {
+    return "query " + queryname + "($uid: string) {\n"
+        + queryfunctionname + "(func: uid($uid)) {\n"
+        + fields +
+        """
+              }
+            }""";
+  }
+
 
   /**
    * Maps a Class<?> to a DGraphType for Query

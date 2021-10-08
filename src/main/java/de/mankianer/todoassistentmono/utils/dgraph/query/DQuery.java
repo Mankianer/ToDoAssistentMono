@@ -19,6 +19,8 @@ public class DQuery {
   @NonNull
   private Class<? extends DgraphEntity> actualTypeArgument;
   @NonNull
+  private Map queryMap;
+  @NonNull
   private String fieldName, paramName;
   @NonNull
   private DGraphType paramType;
@@ -34,9 +36,4 @@ public class DQuery {
         DGraphQueryUtils.convertQueryMapToField(getQueryMap()) +
         "}\n}";
   }
-
-  private Map getQueryMap() {
-    return DGraphQueryUtils.getFieldMap(actualTypeArgument);
-  }
-
 }
