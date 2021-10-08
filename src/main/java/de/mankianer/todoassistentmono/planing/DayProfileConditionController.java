@@ -2,13 +2,16 @@ package de.mankianer.todoassistentmono.planing;
 
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ParameterType;
+import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ValueException;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.DayOfMonthDayProfileCondition;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.JSDayProfileCondition;
+import de.mankianer.todoassistentmono.repos.DayProfileConditionRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.DgraphRepo;
-import de.mankianer.todoassistentmono.utils.dgraph.DgraphService;
-import java.util.Collection;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -19,15 +22,17 @@ import org.springframework.stereotype.Component;
 public class DayProfileConditionController {
 
   private Map<String, Class<? extends DayProfileCondition>> dayProfileConditionMap;
-  @Getter
+
   private Map<String, Map<String, ParameterType>> conditionParameterMap;
 
-  private final DgraphService dgraphService;
+  @Getter
+  private final DayProfileConditionRepo repo;
 
-  public DayProfileConditionController(DgraphService dgraphService) {
+  public DayProfileConditionController(DayProfileConditionRepo repo) {
     DgraphRepo.registerMultiCastEntityResolver(DayProfileCondition.class, this::resolve);
     dayProfileConditionMap = new HashMap<>();
-    this.dgraphService = dgraphService;
+    conditionParameterMap = new HashMap<>();
+    this.repo = repo;
   }
 
   @PostConstruct
@@ -35,46 +40,44 @@ public class DayProfileConditionController {
     register(JSDayProfileCondition.class, DayOfMonthDayProfileCondition.class);
   }
 
-//  public <T extends DayProfileCondition> T saveToDgraph(T entity) {
-//    resolve(entity.getClass().getSimpleName())
-//    return dgraphService.<T>saveToDGraph(entity);
-//  }
-//
-//  public <T extends DayProfileCondition> T findByUid(String uid){
-//    return dgraphService.findByUid(uid);
-//  }
-//
-//  public boolean deleteFromDGraph(@NonNull String uid) {
-//    return dgraphService.deleteFromDGraph(uid);
-//  }
-
-  public Collection<Class<? extends DayProfileCondition>> getRegisteredCondition() {
-    return dayProfileConditionMap.values();
+  public Set<Entry<String, Map<String, ParameterType>>> getRegisteredConditionParameterMap() {
+    return conditionParameterMap.entrySet();
   }
 
   public void register(Class<? extends DayProfileCondition>... dayProfileConditionClasses) {
     for (Class<? extends DayProfileCondition> dayProfileConditionClass : dayProfileConditionClasses) {
-      dayProfileConditionMap.put(dayProfileConditionClass.getSimpleName(), dayProfileConditionClass);
+      try {
+        DayProfileCondition dayProfileCondition = dayProfileConditionClass.getDeclaredConstructor()
+            .newInstance();
+        dayProfileConditionMap.put(dayProfileCondition.getMultiClassIdentifier(), dayProfileConditionClass);
+        conditionParameterMap.put(dayProfileCondition.getMultiClassIdentifier(),
+            dayProfileCondition.getParameterTypeMap());
+      } catch (Exception e) {
+        log.error(e);
+      }
     }
-    conditionParameterMap = createConditionParameterMap();
   }
 
   public Class<? extends DayProfileCondition> resolve(String identifier) {
     return dayProfileConditionMap.get(identifier);
   }
 
-  public Map<String, Map<String, ParameterType>> createConditionParameterMap() {
-    Map<String, Map<String, ParameterType>> ret = new HashMap<>();
-    dayProfileConditionMap.entrySet().forEach(e -> {
-      DayProfileCondition o = null;
-      try {
-        o = e.getValue().getConstructor().newInstance();
-        ret.put(e.getKey(), o.getParameterTypeMap());
-      } catch (Exception ex) {
-        log.warn(ex);
-        ret.put(e.getKey(), null);
-      }
-    });
-    return ret;
+  public DayProfileCondition createNewCondition(String identifier, Map<String, ?> values)
+      throws ValueException {
+    try {
+      DayProfileCondition dayProfileCondition = resolve(identifier).getDeclaredConstructor()
+          .newInstance();
+      dayProfileCondition.applyValues(values);
+      return dayProfileCondition;
+    } catch (InstantiationException e) {
+      log.error(e);
+    } catch (IllegalAccessException e) {
+      log.error(e);
+    } catch (InvocationTargetException e) {
+      log.error(e);
+    } catch (NoSuchMethodException e) {
+      log.error(e);
+    }
+    return null;
   }
 }

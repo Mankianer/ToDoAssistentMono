@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.google.gson.Gson;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ParameterType;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.JSDayProfileCondition;
-import de.mankianer.todoassistentmono.utils.dgraph.DgraphService;
+import de.mankianer.todoassistentmono.repos.DayProfileConditionRepo;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,8 +14,8 @@ class DayProfileConditionControllerTest {
 
   @Test
   void getConditionParameterMap() {
-    DgraphService dgraphService = Mockito.mock(DgraphService.class);
-    DayProfileConditionController dayProfileConditionController = new DayProfileConditionController(dgraphService);
+    DayProfileConditionRepo dayProfileConditionRepo = Mockito.mock(DayProfileConditionRepo.class);
+    DayProfileConditionController dayProfileConditionController = new DayProfileConditionController(dayProfileConditionRepo);
     dayProfileConditionController.register(JSDayProfileCondition.class);
     String s = new Gson().toJson(dayProfileConditionController.getConditionParameterMap());
 

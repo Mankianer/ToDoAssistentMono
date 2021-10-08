@@ -45,3 +45,12 @@ Authorization: Bearer {{accessTokenEndless}}
 ###
 DELETE https://localhost:8080/yearscheme/0x116d5/
 Authorization: Bearer {{accessTokenEndless}}
+
+###
+POST https://localhost:8080/dayprofilecondition/create/DayOfMonthDayProfileCondition
+Authorization: Bearer {{accessTokenEndless}}
+Content-Type: application/json
+
+{
+  "dayOfMonth": 5
+}

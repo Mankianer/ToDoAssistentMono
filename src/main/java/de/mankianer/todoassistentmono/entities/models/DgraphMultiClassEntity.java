@@ -7,6 +7,6 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class DgraphMultiClassEntity extends DgraphEntity {
 
-  private String multiClassIdentifier = "";
+  private String multiClassIdentifier = getClass().getSimpleName();
 
 }

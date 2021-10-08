@@ -87,6 +87,9 @@ public class DgraphRepo<T extends DgraphEntity> {
     Class<? extends DgraphEntity> targetClass = actualTypeArgument;
     if (isMultiClass()) {
       String multiClassIdentifier = findMultiClassIdentifierByUid(uid);
+      if (multiClassIdentifier == null) {
+        return null;
+      }
       targetClass = tryResolveMultiClassEntity(multiClassIdentifier);
     }
     Map queryMap = getQueryMap(targetClass);
@@ -117,8 +120,15 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   private String findMultiClassIdentifierByUid(String uid) {
-    String json = findJsonByUidAndQueryMap(uid, Map.of("multiClassIdentifier", null));
-    return gson.fromJson(json, DgraphMultiClassEntity.class).getMultiClassIdentifier();
+    Map<String, Map> valueMap = new HashMap<>();
+    valueMap.put("multiClassIdentifier", null);
+    String json = findJsonByUidAndQueryMap(uid, valueMap);
+    DgraphMultiClassEntity[] dgraphMultiClassEntities = gson.fromJson(json,
+        (Type) DgraphMultiClassEntity.class.arrayType());
+    if (dgraphMultiClassEntities == null || dgraphMultiClassEntities.length <= 0) {
+      return null;
+    }
+    return dgraphMultiClassEntities[0].getMultiClassIdentifier();
   }
 
   public T findByValue(String name, String value, DGraphType type)
@@ -126,6 +136,9 @@ public class DgraphRepo<T extends DgraphEntity> {
     Class<? extends DgraphEntity> targetClass = actualTypeArgument;
     if (isMultiClass()) {
       String multiClassIdentifier = findMultiClassIdentifierByValue(name, value, type);
+      if (multiClassIdentifier == null) {
+        return null;
+      }
       targetClass = tryResolveMultiClassEntity(multiClassIdentifier);
     }
     String json = findJsonByValueAndQueryMap(name, value, type,
@@ -160,7 +173,12 @@ public class DgraphRepo<T extends DgraphEntity> {
       throws NoSuchFieldException {
     String json = findJsonByValueAndQueryMap(name, value, type, DgraphMultiClassEntity.class,
         Map.of("multiClassIdentifier", null));
-    return gson.fromJson(json, DgraphMultiClassEntity.class).getMultiClassIdentifier();
+    DgraphMultiClassEntity[] dgraphMultiClassEntities = gson.fromJson(json,
+        (Type) DgraphMultiClassEntity.class.arrayType());
+    if (dgraphMultiClassEntities == null || dgraphMultiClassEntities.length <= 0) {
+      return null;
+    }
+    return dgraphMultiClassEntities[0].getMultiClassIdentifier();
   }
 
   public boolean deleteFromDGraphByUid(@NonNull String uid) {

@@ -1,5 +1,6 @@
 package de.mankianer.todoassistentmono.entities.models.planing.condition;
 
+import com.google.appengine.repackaged.org.codehaus.jackson.annotate.JsonIgnore;
 import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ public abstract class DayProfileCondition extends DgraphMultiClassEntity impleme
     return ret instanceof Integer ? (Integer) ret : ((Double) ret).intValue();
   }
 
+  @JsonIgnore
+  @com.fasterxml.jackson.annotation.JsonIgnore
   public abstract Map<String, ParameterType> getParameterTypeMap();
 
   public void applyValues(Map<String, ?> values) throws ValueException {
@@ -30,20 +33,23 @@ public abstract class DayProfileCondition extends DgraphMultiClassEntity impleme
   }
 
   private void validateValues(Map<String, ?> values) throws ValueException {
-    Stream<Triplet<String, ParameterType, Object>> tripletStream = getParameterTypeMap().keySet()
-        .stream().map(name -> {
-          return new Triplet(name, getParameterTypeMap().get(name), values.get(name));
-        });
-    List<Triplet<String, ParameterType, Object>> missingValues = tripletStream.filter(t -> t.getValue(2) == null)
+    List<Triplet<String, ParameterType, Object>> missingValues = getTripletStream(values).filter(t -> t.getValue(2) == null)
         .collect(Collectors.toList());
-    List<Triplet<String, ParameterType, Object>> tooMuchValues = tripletStream.filter(t -> t.getValue(1) == null)
+    List<Triplet<String, ParameterType, Object>> tooMuchValues = getTripletStream(values).filter(t -> t.getValue(1) == null)
         .collect(Collectors.toList());
-    List<Triplet<String, ParameterType, Object>> typeMismatch = tripletStream.filter(
+    List<Triplet<String, ParameterType, Object>> typeMismatch = getTripletStream(values).filter(
         t -> !validateType(t.getValue1(), t.getValue(2))).collect(Collectors.toList());
 
     if(!missingValues.isEmpty() || !tooMuchValues.isEmpty() || !typeMismatch.isEmpty()) {
       throw new ValueException(missingValues, tooMuchValues, typeMismatch);
     }
+  }
+
+  private Stream<Triplet<String, ParameterType, Object>> getTripletStream(Map<String, ?> values) {
+    return getParameterTypeMap().keySet()
+        .stream().map(name -> {
+          return new Triplet(name, getParameterTypeMap().get(name), values.get(name));
+        });
   }
 
   protected abstract void passValues(Map<String, ?> values);

@@ -11,6 +11,7 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.gson.GsonBuilder;
 import de.mankianer.todoassistentmono.entities.models.TimeSlot;
 import de.mankianer.todoassistentmono.entities.models.YearScheme;
+import de.mankianer.todoassistentmono.planing.DayProfileConditionController;
 import de.mankianer.todoassistentmono.planing.generators.SimpleYearSchemeGenerator;
 import de.mankianer.todoassistentmono.repos.TimeSlotsRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.DgraphService;
@@ -56,14 +57,16 @@ public class DevRestController {
   private final GoogleService googleService;
   private final GoogleCalendarService calendarService;
   private final TimeSlotsRepo timeSlotComponent;
+  private final DayProfileConditionController dayProfileConditionController;
 
   public DevRestController(DgraphService dgraph,
       GoogleService googleService, GoogleCalendarService calendarService,
-      TimeSlotsRepo timeSlotComponent) {
+      TimeSlotsRepo timeSlotComponent, DayProfileConditionController dayProfileConditionController) {
     this.dgraph = dgraph;
     this.googleService = googleService;
     this.calendarService = calendarService;
     this.timeSlotComponent = timeSlotComponent;
+    this.dayProfileConditionController = dayProfileConditionController;
   }
 
   @PostConstruct
