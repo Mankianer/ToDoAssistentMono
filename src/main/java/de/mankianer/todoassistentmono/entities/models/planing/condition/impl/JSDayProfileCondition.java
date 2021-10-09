@@ -28,7 +28,7 @@ public class JSDayProfileCondition extends DayProfileCondition {
   private static String functionName = "isTrue";
 
   @NonNull
-  private String name, script;
+  private String script;
 
   /**
    * @throws DayProfileConditionException rootException Map: ScriptException = Script Error

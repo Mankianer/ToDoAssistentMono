@@ -39,16 +39,18 @@ public class DayProfileConditionRestController {
   }
 
   @PostMapping("/create/{identifier}")
-  public ResponseEntity createNewCondition(@PathVariable String identifier, @RequestBody Map<String, ?> values, @RequestParam(defaultValue = "false") boolean dryRun) {
+  public ResponseEntity createNewCondition(@PathVariable String identifier,
+      @RequestBody Map<String, ?> values, @RequestParam(defaultValue = "false") boolean dryRun,
+      @RequestParam(defaultValue = "New Condition") String name) {
     try {
-      DayProfileCondition newCondition = dayProfileConditionController.createNewCondition(
+      DayProfileCondition newCondition = dayProfileConditionController.createNewCondition(name,
           identifier, values);
-      if(!dryRun){
-        newCondition = dayProfileConditionController.getRepo().saveToDGraph(newCondition);
+      if (!dryRun) {
+        newCondition = dayProfileConditionController.getRepo().saveToDGraph(newCondition);//TODO In einem AnkerObjekt Sammeln um alle abrufen zu können
       }
       return ResponseEntity.ok(newCondition);
     } catch (ValueException e) {
-      log.warn("Wrong Value",e);
+      log.warn("Wrong Value", e);
       return ResponseEntity.badRequest().body(e.getMessage());
     }
   }

@@ -62,12 +62,13 @@ public class DayProfileConditionController {
     return dayProfileConditionMap.get(identifier);
   }
 
-  public DayProfileCondition createNewCondition(String identifier, Map<String, ?> values)
+  public DayProfileCondition createNewCondition(String name, String identifier, Map<String, ?> values)
       throws ValueException {
     try {
       DayProfileCondition dayProfileCondition = resolve(identifier).getDeclaredConstructor()
           .newInstance();
       dayProfileCondition.applyValues(values);
+      dayProfileCondition.setName(name);
       return dayProfileCondition;
     } catch (InstantiationException e) {
       log.error(e);

@@ -17,6 +17,8 @@ import org.javatuples.Triplet;
 public abstract class DayProfileCondition extends DgraphMultiClassEntity implements
     DayProfileConditionInterface {
 
+  private String name;
+
 
   public static Integer getIntegerFromNumber(String name, Map<String, ?> values) {
     Object ret = values.get(name);
