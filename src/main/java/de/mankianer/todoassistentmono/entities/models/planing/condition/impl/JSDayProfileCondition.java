@@ -62,14 +62,12 @@ public class JSDayProfileCondition extends DayProfileCondition {
   @Override
   public Map<String, ParameterType> getParameterTypeMap() {
     return Map.of(
-        "name", ParameterType.STRING,
         "script", ParameterType.STRING
     );
   }
 
   @Override
   protected void passValues(Map<String, ?> values) {
-    name = (String) values.get("name");
     script = (String) values.get("script");
   }
 }

@@ -41,6 +41,13 @@ public class DgraphRepo<T extends DgraphEntity> {
     resolverMap.put(parent, resolver);
   }
 
+  public static <S extends DgraphEntity> Class<? extends DgraphEntity> TryResolveMultiClassEntity(
+      String identifier, Class<S> targetClass) {
+    Class<? extends DgraphMultiClassEntity> multiClassParent = DGraphUtils.findMultiClassParent(
+        targetClass);
+    return resolverMap.get(multiClassParent).apply(identifier);
+  }
+
   public DgraphRepo(DgraphClient dgraphClient) {
     this.dgraphClient = dgraphClient;
     this.gson = new GsonBuilder()
@@ -84,18 +91,21 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   public T findByUid(String uid) {
-    Class<? extends DgraphEntity> targetClass = actualTypeArgument;
-    if (isMultiClass()) {
-      String multiClassIdentifier = findMultiClassIdentifierByUid(uid);
-      if (multiClassIdentifier == null) {
-        return null;
-      }
-      targetClass = tryResolveMultiClassEntity(multiClassIdentifier);
-    }
-    Map queryMap = getQueryMap(targetClass);
+    Map queryMap = getQueryMap(actualTypeArgument,
+        getFindMultiClassIdentifierByPathFunktionByUid(uid));
     String json = findJsonByUidAndQueryMap(uid, queryMap);
-    T[] byUid = gson.fromJson(json, (Type) targetClass.arrayType());
 
+    T[] byUid = gson.fromJson(json, (Type) actualTypeArgument.arrayType());
+    return byUid.length > 0 ? byUid[0] : null;
+  }
+
+  public T findByValue(String name, String value, DGraphType type)
+      throws NoSuchFieldException {
+    Map queryMap = getQueryMap(actualTypeArgument,
+        getFindMultiClassIdentifierByPathFunktionByValue(name, value, type));
+    String json = findJsonByValueAndQueryMap(name, value, type, actualTypeArgument, queryMap);
+
+    T[] byUid = gson.fromJson(json, (Type) actualTypeArgument.arrayType());
     return byUid.length > 0 ? byUid[0] : null;
   }
 
@@ -119,34 +129,38 @@ public class DgraphRepo<T extends DgraphEntity> {
     return json;
   }
 
-  private String findMultiClassIdentifierByUid(String uid) {
-    Map<String, Map> valueMap = new HashMap<>();
-    valueMap.put("multiClassIdentifier", null);
-    String json = findJsonByUidAndQueryMap(uid, valueMap);
-    DgraphMultiClassEntity[] dgraphMultiClassEntities = gson.fromJson(json,
-        (Type) DgraphMultiClassEntity.class.arrayType());
-    if (dgraphMultiClassEntities == null || dgraphMultiClassEntities.length <= 0) {
-      return null;
-    }
-    return dgraphMultiClassEntities[0].getMultiClassIdentifier();
+  private Function<String, String> getFindMultiClassIdentifierByPathFunktionByUid(String uid) {
+    return (String path) -> {
+      return findMultiClassIdentifierByUid(uid, path);
+    };
   }
 
-  public T findByValue(String name, String value, DGraphType type)
-      throws NoSuchFieldException {
-    Class<? extends DgraphEntity> targetClass = actualTypeArgument;
-    if (isMultiClass()) {
-      String multiClassIdentifier = findMultiClassIdentifierByValue(name, value, type);
-      if (multiClassIdentifier == null) {
+  private Function<String, String> getFindMultiClassIdentifierByPathFunktionByValue(String name,
+      String value, DGraphType type) {
+    return (String path) -> {
+      try {
+        return findMultiClassIdentifierByValue(name, value, type, path);
+      } catch (NoSuchFieldException e) {
+        log.error(e);
         return null;
       }
-      targetClass = tryResolveMultiClassEntity(multiClassIdentifier);
-    }
-    String json = findJsonByValueAndQueryMap(name, value, type,
-        targetClass,
-        DGraphQueryUtils.getFieldMap(targetClass));
-    T[] byUid = gson.fromJson(json, (Type) targetClass.arrayType());
+    };
+  }
 
-    return byUid.length > 0 ? byUid[0] : null;
+  private String findMultiClassIdentifierByUid(String uid, String path) {
+    Map<String, Map> valueMap = DGraphQueryUtils.createValueMapForMultiClassIdentifier(path);
+    String json = findJsonByUidAndQueryMap(uid, valueMap);
+    String identifier = DGraphUtils.parseMultiClassIdentifierFromJson(json);
+    return identifier;
+  }
+
+  private String findMultiClassIdentifierByValue(String name, String value, DGraphType type,
+      String path)
+      throws NoSuchFieldException {
+    Map<String, Map> valueMap = DGraphQueryUtils.createValueMapForMultiClassIdentifier(path);
+    String json = findJsonByValueAndQueryMap(name, value, type, actualTypeArgument, valueMap);
+    String identifier = DGraphUtils.parseMultiClassIdentifierFromJson(json);
+    return identifier;
   }
 
   private String findJsonByValueAndQueryMap(String name, String value, DGraphType type,
@@ -165,20 +179,15 @@ public class DgraphRepo<T extends DgraphEntity> {
     return json;
   }
 
-  private Map getQueryMap(Class targetClass) {
-    return DGraphQueryUtils.getFieldMap(targetClass);
+  private Map getQueryMap(Class targetClass, Function<String, String> findIdentifierByPath) {
+    Map<String, Class<? extends DgraphMultiClassEntity>> pathToMultiClassMap = findMultiClassWithPath(
+        targetClass, findIdentifierByPath);
+    return DGraphQueryUtils.getFieldMap(targetClass, pathToMultiClassMap, "");
   }
 
-  private String findMultiClassIdentifierByValue(String name, String value, DGraphType type)
-      throws NoSuchFieldException {
-    String json = findJsonByValueAndQueryMap(name, value, type, DgraphMultiClassEntity.class,
-        Map.of("multiClassIdentifier", null));
-    DgraphMultiClassEntity[] dgraphMultiClassEntities = gson.fromJson(json,
-        (Type) DgraphMultiClassEntity.class.arrayType());
-    if (dgraphMultiClassEntities == null || dgraphMultiClassEntities.length <= 0) {
-      return null;
-    }
-    return dgraphMultiClassEntities[0].getMultiClassIdentifier();
+  private Map<String, Class<? extends DgraphMultiClassEntity>> findMultiClassWithPath(
+      Class<? extends DgraphEntity> targetClass, Function<String, String> findIdentifierByPath) {
+    return DGraphUtils.findMultiClassWithPath(targetClass, "", findIdentifierByPath);
   }
 
   public boolean deleteFromDGraphByUid(@NonNull String uid) {
