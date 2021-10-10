@@ -148,7 +148,7 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   private String findMultiClassIdentifierByUid(String uid, String path) {
-    Map<String, Map> valueMap = DGraphQueryUtils.createValueMapForMultiClassIdentifier(path);
+    Map<String, Map> valueMap = DGraphQueryUtils.createQueryMapFromPathForMultiClassIdentifier(path);
     String json = findJsonByUidAndQueryMap(uid, valueMap);
     String identifier = DGraphUtils.parseMultiClassIdentifierFromJson(json);
     return identifier;
@@ -157,7 +157,7 @@ public class DgraphRepo<T extends DgraphEntity> {
   private String findMultiClassIdentifierByValue(String name, String value, DGraphType type,
       String path)
       throws NoSuchFieldException {
-    Map<String, Map> valueMap = DGraphQueryUtils.createValueMapForMultiClassIdentifier(path);
+    Map<String, Map> valueMap = DGraphQueryUtils.createQueryMapFromPathForMultiClassIdentifier(path);
     String json = findJsonByValueAndQueryMap(name, value, type, actualTypeArgument, valueMap);
     String identifier = DGraphUtils.parseMultiClassIdentifierFromJson(json);
     return identifier;

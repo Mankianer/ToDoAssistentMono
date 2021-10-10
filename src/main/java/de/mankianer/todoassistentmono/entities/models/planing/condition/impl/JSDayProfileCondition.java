@@ -30,6 +30,7 @@ public class JSDayProfileCondition extends DayProfileCondition {
   @NonNull
   private String script;
 
+
   /**
    * @throws DayProfileConditionException rootException Map: ScriptException = Script Error
    * NoSuchMethodException = Script Error with semantic-problems NullPointerException = Blank Script

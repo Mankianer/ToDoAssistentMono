@@ -21,6 +21,6 @@ class DayProfileConditionControllerTest {
 
     assertThat(dayProfileConditionController.getConditionParameterMap()).usingRecursiveComparison()
         .isEqualTo(Map.of("JSDayProfileCondition", Map.of("script",
-            ParameterType.STRING, "name", ParameterType.STRING)));
+            ParameterType.STRING)));
   }
 }

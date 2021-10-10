@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.PostConstruct;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ public class DayProfileConditionController {
 
   private Map<String, Class<? extends DayProfileCondition>> dayProfileConditionMap;
 
+  @Getter(AccessLevel.PACKAGE)
   private Map<String, Map<String, ParameterType>> conditionParameterMap;
 
   @Getter

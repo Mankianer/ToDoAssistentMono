@@ -9,11 +9,13 @@ import de.mankianer.todoassistentmono.utils.dgraph.query.DGraphQueryUtils;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -40,14 +42,26 @@ public class DGraphUtils {
           break;
         }
         JsonToken token = jsonReader.peek();
-        if(JsonToken.NAME.equals(token)){
-          if(jsonReader.nextName().equalsIgnoreCase("multiClassIdentifier")){
+        if (JsonToken.NAME.equals(token)) {
+          if (jsonReader.nextName().equalsIgnoreCase("multiClassIdentifier")) {
             JsonToken possibleIdentifier = jsonReader.peek();
-            if(JsonToken.STRING.equals(possibleIdentifier)){
+            if (JsonToken.STRING.equals(possibleIdentifier)) {
               identifier = jsonReader.nextString();
               break;
             }
           }
+        }
+
+        if (JsonToken.BEGIN_ARRAY.equals(token)) {
+          jsonReader.beginArray();
+        } else if (JsonToken.END_ARRAY.equals(token)) {
+          jsonReader.endArray();
+        } else if (JsonToken.BEGIN_OBJECT.equals(token)) {
+          jsonReader.beginObject();
+        } else if (JsonToken.END_OBJECT.equals(token)) {
+          jsonReader.endObject();
+        } else {
+          jsonReader.skipValue();
         }
       } catch (IOException e) {
         e.printStackTrace();
@@ -64,13 +78,10 @@ public class DGraphUtils {
       try {
         instance = targetClass.getDeclaredConstructor().newInstance();
       } catch (NoSuchMethodException | InstantiationException e) {
-        Class<? extends DgraphMultiClassEntity> multiClassParent = findMultiClassParent(targetClass);
-        if(multiClassParent != null) {
-          try {
-            instance = multiClassParent.getDeclaredConstructor().newInstance();
-          } catch (NoSuchMethodException | InstantiationException ex) {
-            instance = new DgraphMultiClassEntity();
-          }
+        Class<? extends DgraphMultiClassEntity> multiClassParent = findMultiClassParent(
+            targetClass);
+        if (multiClassParent != null) {
+          instance = blankInstandOfMultiClassParent(multiClassParent);
         }
       }
       if (instance instanceof DgraphEntity) {
@@ -80,7 +91,11 @@ public class DGraphUtils {
               targetClass);
           ret.put(pathPrefix,
               childClass != null ? childClass : DgraphMultiClassEntity.class);
-          instance = childClass.getDeclaredConstructor().newInstance();
+          try {
+            instance = childClass.getDeclaredConstructor().newInstance();
+          } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+            instance = blankInstandOfMultiClassParent(findMultiClassParent(childClass));
+          }
         }
         List<Field> allFields = ((DgraphEntity) instance).getAllFields();
         allFields.forEach(field -> {
@@ -99,5 +114,17 @@ public class DGraphUtils {
       log.error(e);
     }
     return ret;
+  }
+
+  public static DgraphMultiClassEntity blankInstandOfMultiClassParent(
+      @NonNull Class<? extends DgraphMultiClassEntity> multiClassParent) {
+    DgraphMultiClassEntity instance;
+    try {
+      instance = multiClassParent.getDeclaredConstructor().newInstance();
+    } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      instance = new DgraphMultiClassEntity();
+    }
+
+    return instance;
   }
 }

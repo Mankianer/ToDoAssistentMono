@@ -14,13 +14,13 @@ class JSDayProfileConditionTest {
   @ValueSource(strings = {"return true"})
   @ParameterizedTest
   void evaluateTrue(String script) throws DayProfileConditionException {
-    JSDayProfileCondition jsCondition = new JSDayProfileCondition("test", script);
+    JSDayProfileCondition jsCondition = new JSDayProfileCondition(script);
     assertTrue(jsCondition.evaluate(new DayProfileConditionContext()));
   }
   @ValueSource(strings = {"return false"})
   @ParameterizedTest
   void evaluateFalse(String script) throws DayProfileConditionException {
-    JSDayProfileCondition jsCondition = new JSDayProfileCondition("test", script);
+    JSDayProfileCondition jsCondition = new JSDayProfileCondition(script);
     assertFalse(jsCondition.evaluate(new DayProfileConditionContext()));
   }
 
@@ -30,7 +30,7 @@ class JSDayProfileConditionTest {
   })
   @ParameterizedTest
   void evaluateError(String script) throws DayProfileConditionException {
-    JSDayProfileCondition jsCondition = new JSDayProfileCondition("test", script);
+    JSDayProfileCondition jsCondition = new JSDayProfileCondition(script);
     assertThrows(DayProfileConditionException.class, () -> {
       jsCondition.evaluate(new DayProfileConditionContext());
     });

@@ -2,8 +2,10 @@ package de.mankianer.todoassistentmono.utils.dgraph.query;
 
 import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
 import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
+import de.mankianer.todoassistentmono.utils.dgraph.DGraphUtils;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryRootFilter.RootTypes;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,20 +13,38 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class DGraphQueryUtils {
 
+  /**
+   *
+   * @param filedName searching DgraphEntity field
+   * @param paramName searching DgraphQuery parameter
+   * @param actualTypeArgument targeted search Class
+   * @param queryFieldMap values to be used in Query
+   * @return a Query for request Dgraph
+   * @throws NoSuchFieldException
+   */
   public static DQuery createFindByValueQuery(String filedName, String paramName,
-      Class<? extends DgraphEntity> actualTypeArgument, Map<String, Map> queryMap)
+      Class<? extends DgraphEntity> actualTypeArgument, Map<String, Map> queryFieldMap)//TODO Remove actualTypeArgument
       throws NoSuchFieldException {
     return DQuery.builder().queryname("findByValue").functionName("findByValue")
         .actualTypeArgument(actualTypeArgument).fieldName(filedName).paramName(paramName)
-        .queryMap(queryMap)
+        .queryMap(queryFieldMap)
         .paramType(findDGraphType(actualTypeArgument.getDeclaredField(filedName).getType()))
         .rootFilter(
             RootTypes.EQUALS).build();
   }
 
+  /**
+   *
+   * @param fields fieldspart of the QueryString
+   * @param queryname name of Query
+   * @param queryfunctionname name of QueryFunction
+   * @return the Query as String
+   */
   public static String createQueryString(String fields, String queryname,
       String queryfunctionname) {
     return "query " + queryname + "($uid: string) {\n"
@@ -54,6 +74,8 @@ public class DGraphQueryUtils {
 
   /**
    *
+   * @param queryMap values used to be in Query
+   * @return FieldsPart for DGraphQuery
    */
   public static String convertQueryMapToField(Map<String, Map> queryMap) {
     final String[] queryString = {""};
@@ -83,7 +105,7 @@ public class DGraphQueryUtils {
   }
 
   /**
-   * Mapping the Fields of a DgraphEntity for Query in a treeLike Map. Ignorse Fileds with
+   * Mapping the Fields of a DgraphEntity for Query in a treeLike Map. Ignorse Fileds with @JsonIgnore
    *
    * @return Map<S, Map < S, Map < S, . . .>>> if Key is not null it is a DgraphEntity
    * @JsonIgnore annotation.
@@ -92,7 +114,16 @@ public class DGraphQueryUtils {
       Map<String, Class<? extends DgraphMultiClassEntity>> pathToMultiClassMap, String path) {
     HashMap<String, Map> fieldMap = new HashMap<>();
     try {
-      var instance = clazz.getDeclaredConstructor().newInstance();
+      DgraphEntity instance = null;
+      try {
+        instance = clazz.getDeclaredConstructor().newInstance();
+      } catch (InstantiationException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        Class<? extends DgraphMultiClassEntity> multiClassParent = DGraphUtils.findMultiClassParent(
+            clazz);
+        if (multiClassParent != null) {
+          instance = DGraphUtils.blankInstandOfMultiClassParent(multiClassParent);
+        }
+      }
       List<Field> allFields = instance
           .getAllFields();
       allFields.forEach(field -> {
@@ -116,23 +147,26 @@ public class DGraphQueryUtils {
           } else {
             fieldMap.put(field.getName(), null);
           }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
           fieldMap.put(field.getName(), null);
         }
 
       });
-    } catch (Exception e) {
-      System.err.println("Error while parsing DGraphEntity to DgraphQuery, not critical!");
-      System.err.println(e);
+    } catch (RuntimeException e) {
+      log.error("Error while parsing DGraphEntity to DgraphQuery, not critical!", e);
       fieldMap.put("uid", null);
     }
     return fieldMap;
   }
 
-  public static Map<String, Map> createValueMapForMultiClassIdentifier(String path) {
+  /**
+   *
+   * @param path target path for Identifier
+   * @return QueryMap From Path with MultiClassIdentifierQuery
+   */
+  public static Map<String, Map> createQueryMapFromPathForMultiClassIdentifier(String path) {
     Map<String, Map> valueMap = new HashMap<>();
     valueMap.put("multiClassIdentifier", null);
-    System.out.println("add multiClassIdentifier");
     //baut valueMap für Path auf
     if (path != null && !path.isBlank()) {
       String[] split = path.split("\\.");
@@ -140,7 +174,6 @@ public class DGraphQueryUtils {
         Map<String, Map> newSubMap = new HashMap<>();
         newSubMap.put(split[i], valueMap);
         valueMap = newSubMap;
-        System.out.println("add " + split[i]);
       }
     }
     return valueMap;
