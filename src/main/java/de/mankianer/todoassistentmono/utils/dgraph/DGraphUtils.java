@@ -33,6 +33,10 @@ public class DGraphUtils {
     return null;
   }
 
+  /**
+   * @param json returned after request MulticlassIdentifier
+   * @return MultiClassIdentifier
+   */
   public static String parseMultiClassIdentifierFromJson(String json) {
     JsonReader jsonReader = new Gson().newJsonReader(new StringReader(json));
     String identifier = null;
@@ -70,6 +74,12 @@ public class DGraphUtils {
     return identifier;
   }
 
+  /**
+   * @param pathPrefix prefix for Path
+   * @param findIdentifierByPath Method to resolve Path to actually MultiClassEntityIdentifier
+   * @return Map: FieldClass Path to DgraphMultiClassParent if Field is instanceOf
+   * DgraphMultiClassEntity
+   */
   public static Map<String, Class<? extends DgraphMultiClassEntity>> findMultiClassWithPath(
       Class targetClass, String pathPrefix, Function<String, String> findIdentifierByPath) {
     Map<String, Class<? extends DgraphMultiClassEntity>> ret = new HashMap<>();
@@ -89,8 +99,9 @@ public class DGraphUtils {
           Class childClass = DgraphRepo.TryResolveMultiClassEntity(
               findIdentifierByPath.apply(pathPrefix),
               targetClass);
+          childClass = childClass != null ? childClass : DgraphMultiClassEntity.class;
           ret.put(pathPrefix,
-              childClass != null ? childClass : DgraphMultiClassEntity.class);
+              childClass);
           try {
             instance = childClass.getDeclaredConstructor().newInstance();
           } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
@@ -116,6 +127,11 @@ public class DGraphUtils {
     return ret;
   }
 
+  /**
+   *
+   * @param multiClassParent
+   * @return instance of multiClassParent or DgraphMultiClassEntity
+   */
   public static DgraphMultiClassEntity blankInstandOfMultiClassParent(
       @NonNull Class<? extends DgraphMultiClassEntity> multiClassParent) {
     DgraphMultiClassEntity instance;

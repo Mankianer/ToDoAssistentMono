@@ -13,7 +13,7 @@ import lombok.NonNull;
 public class DayOfMonthDayProfileCondition extends DayProfileCondition {
 
   @NonNull
-  private int dayOfMonth;
+  private int dayOfMonth = 0;
 
   @Override
   public Map<String, ParameterType> getParameterTypeMap() {

@@ -2,6 +2,7 @@ package de.mankianer.todoassistentmono.utils.dgraph;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
 import com.google.protobuf.ByteString;
 import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
 import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
@@ -29,30 +30,41 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class DgraphRepo<T extends DgraphEntity> {
 
+  static {
+    gsonBuilder = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
+    gson = DgraphRepo.gsonBuilder.create();
+  }
+
   private static Map<Class<? extends DgraphMultiClassEntity>, Function<String, Class<? extends DgraphMultiClassEntity>>> resolverMap = new HashMap<>();
+  private static GsonBuilder gsonBuilder;
+  private static Gson gson;
 
   private final Class<T> actualTypeArgument;
   private final Class<? extends DgraphMultiClassEntity> multiClassParent;
   private DgraphClient dgraphClient;
-  private Gson gson;
 
   public static <S extends DgraphMultiClassEntity> void registerMultiCastEntityResolver(
-      Class<S> parent, Function<String, Class<? extends DgraphMultiClassEntity>> resolver) {
+      Class<S> parent, Function<String, Class<? extends DgraphMultiClassEntity>> resolver, JsonDeserializer<S> jsonDeserializer) {
     resolverMap.put(parent, resolver);
+    gsonBuilder.registerTypeAdapter(parent, jsonDeserializer);
+    gson = gsonBuilder.create();
   }
 
-  public static <S extends DgraphEntity> Class<? extends DgraphEntity> TryResolveMultiClassEntity(
+  public static <S extends DgraphMultiClassEntity> Class<? extends DgraphMultiClassEntity> TryResolveMultiClassEntity(
       String identifier, Class<S> targetClass) {
+    if (targetClass == null || identifier == null) {
+      return null;
+    }
     Class<? extends DgraphMultiClassEntity> multiClassParent = DGraphUtils.findMultiClassParent(
         targetClass);
-    return resolverMap.get(multiClassParent).apply(identifier);
+    Function<String, Class<? extends DgraphMultiClassEntity>> stringClassFunction = resolverMap.get(
+        multiClassParent);
+    return stringClassFunction != null ? stringClassFunction.apply(identifier) : null;
   }
 
   public DgraphRepo(DgraphClient dgraphClient) {
     this.dgraphClient = dgraphClient;
-    this.gson = new GsonBuilder()
-        .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
-        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create();
     actualTypeArgument = (Class<T>) ((ParameterizedType) getClass()
         .getGenericSuperclass()).getActualTypeArguments()[0];
     multiClassParent = DGraphUtils.findMultiClassParent(
@@ -148,7 +160,8 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   private String findMultiClassIdentifierByUid(String uid, String path) {
-    Map<String, Map> valueMap = DGraphQueryUtils.createQueryMapFromPathForMultiClassIdentifier(path);
+    Map<String, Map> valueMap = DGraphQueryUtils.createQueryMapFromPathForMultiClassIdentifier(
+        path);
     String json = findJsonByUidAndQueryMap(uid, valueMap);
     String identifier = DGraphUtils.parseMultiClassIdentifierFromJson(json);
     return identifier;
@@ -157,7 +170,8 @@ public class DgraphRepo<T extends DgraphEntity> {
   private String findMultiClassIdentifierByValue(String name, String value, DGraphType type,
       String path)
       throws NoSuchFieldException {
-    Map<String, Map> valueMap = DGraphQueryUtils.createQueryMapFromPathForMultiClassIdentifier(path);
+    Map<String, Map> valueMap = DGraphQueryUtils.createQueryMapFromPathForMultiClassIdentifier(
+        path);
     String json = findJsonByValueAndQueryMap(name, value, type, actualTypeArgument, valueMap);
     String identifier = DGraphUtils.parseMultiClassIdentifierFromJson(json);
     return identifier;
@@ -179,10 +193,16 @@ public class DgraphRepo<T extends DgraphEntity> {
     return json;
   }
 
-  private Map getQueryMap(Class targetClass, Function<String, String> findIdentifierByPath) {
+  private Map getQueryMap(Class<? extends DgraphEntity> targetClass,
+      Function<String, String> findIdentifierByPath) {
     Map<String, Class<? extends DgraphMultiClassEntity>> pathToMultiClassMap = findMultiClassWithPath(
         targetClass, findIdentifierByPath);
-    return DGraphQueryUtils.getFieldMap(targetClass, pathToMultiClassMap, "");
+
+    Class<? extends DgraphMultiClassEntity> correctTargetClass = DgraphRepo.TryResolveMultiClassEntity(
+        findIdentifierByPath.apply(""),
+        DGraphUtils.findMultiClassParent(targetClass));
+    return DGraphQueryUtils.getFieldMap(
+        correctTargetClass != null ? correctTargetClass : targetClass, pathToMultiClassMap, "");
   }
 
   private Map<String, Class<? extends DgraphMultiClassEntity>> findMultiClassWithPath(

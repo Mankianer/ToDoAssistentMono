@@ -8,10 +8,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.extern.log4j.Log4j2;
 import org.javatuples.Triplet;
 
-@Log4j2
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 public abstract class DayProfileCondition extends DgraphMultiClassEntity implements

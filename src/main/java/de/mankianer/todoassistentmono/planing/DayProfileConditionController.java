@@ -1,5 +1,9 @@
 package de.mankianer.todoassistentmono.planing;
 
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ParameterType;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ValueException;
@@ -8,6 +12,7 @@ import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.JSD
 import de.mankianer.todoassistentmono.repos.DayProfileConditionRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.DgraphRepo;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Log4j2
 @Component
-public class DayProfileConditionController {
+public class DayProfileConditionController implements JsonDeserializer<DayProfileCondition> {
 
   private Map<String, Class<? extends DayProfileCondition>> dayProfileConditionMap;
 
@@ -31,7 +36,7 @@ public class DayProfileConditionController {
   private final DayProfileConditionRepo repo;
 
   public DayProfileConditionController(DayProfileConditionRepo repo) {
-    DgraphRepo.registerMultiCastEntityResolver(DayProfileCondition.class, this::resolve);
+    DgraphRepo.registerMultiCastEntityResolver(DayProfileCondition.class, this::resolve, this);
     dayProfileConditionMap = new HashMap<>();
     conditionParameterMap = new HashMap<>();
     this.repo = repo;
@@ -80,6 +85,20 @@ public class DayProfileConditionController {
       log.error(e);
     } catch (NoSuchMethodException e) {
       log.error(e);
+    }
+    return null;
+  }
+
+  @Override
+  public DayProfileCondition deserialize(JsonElement json, Type typeOfT,
+      JsonDeserializationContext context) throws JsonParseException {
+    String multiClassIdentifier = json.getAsJsonObject().entrySet().stream()
+        .filter(e -> e.getKey().equalsIgnoreCase("multiClassIdentifier"))
+        .map(e -> e.getValue().getAsString()).findFirst().orElse(null);
+    Class<? extends DayProfileCondition> resolvedClass = resolve(multiClassIdentifier);
+    if(resolvedClass != null){
+      DayProfileCondition dayProfileCondition = context.deserialize(json, resolvedClass);
+      return dayProfileCondition;
     }
     return null;
   }
