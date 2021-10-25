@@ -5,6 +5,7 @@ import de.mankianer.todoassistentmono.entities.models.dayprofiles.SimpleDayProfi
 import de.mankianer.todoassistentmono.repos.DayProfileRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.DgraphMultiClassEntityController;
 import java.time.LocalDate;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,10 @@ public class DayProfileController extends DgraphMultiClassEntityController<DayPr
   @PostConstruct
   public void init() {
     register(SimpleDayProfile.class);
+  }
+
+  public Map<String, Class<? extends DayProfile>> getDayProfileMap() {
+    return getResolverMap();
   }
 
   public DayProfile getDayProfileByDate(LocalDate date) {

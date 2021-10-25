@@ -9,6 +9,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
@@ -20,6 +21,7 @@ public class DgraphMultiClassEntityController<T extends DgraphMultiClassEntity> 
   private final Class<T> actualTypeArgument;
   @Getter
   private final DgraphRepo<T> repo;
+  @Getter(AccessLevel.PROTECTED)
   private Map<String, Class<? extends T>> resolverMap;
 
   public DgraphMultiClassEntityController(DgraphRepo<T> repo) {

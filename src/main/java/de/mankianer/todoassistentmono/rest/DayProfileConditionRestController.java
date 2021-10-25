@@ -1,7 +1,8 @@
-package de.mankianer.todoassistentmono.planing;
+package de.mankianer.todoassistentmono.rest;
 
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ValueException;
+import de.mankianer.todoassistentmono.planing.DayProfileConditionController;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
 import java.util.Set;

@@ -60,3 +60,8 @@ Content-Type: application/json
 {
   "dayOfMonth": 6
 }
+
+###
+GET https://localhost:8080/dayProfile/allNames
+Authorization: Bearer {{accessTokenEndless}}
+Content-Type: application/json
