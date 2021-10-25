@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 public class YearSchemeGeneratorConfig extends DgraphEntity {
 
+  private String titel;
   private List<DayProfileRule> dayProfileRules;
   private DayProfile defaultDayProfile;
 }

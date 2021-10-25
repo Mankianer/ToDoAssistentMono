@@ -1,11 +1,11 @@
 package de.mankianer.todoassistentmono.planing;
 
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition;
-import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ParameterType;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition.ValueException;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +29,19 @@ public class DayProfileConditionRestController {
   }
 
   @GetMapping("/registered")
-  public Set<Entry<String, Map<String, ParameterType>>> getRegisteredCondition() {
-    return dayProfileConditionController.getRegisteredConditionParameterMap();
+  public Set<?> getRegisteredCondition() {
+    return dayProfileConditionController.getRegisteredConditionParameterMap().stream().map(
+            e -> e.getValue().entrySet().stream().map(e2 -> {
+              SimpleEntry<String, ?> stringListSimpleEntry;
+              if (e2.getValue()
+                  .getAllowedValues() != null) {
+                return new SimpleEntry<>(e.getKey(),
+                    new SimpleEntry(e2.getKey(),
+                        new SimpleEntry<>(e2.getValue(), e2.getValue().getAllowedValues())));
+              }
+              return new SimpleEntry<>(e.getKey(), e2);
+            }).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue())))
+        .collect(Collectors.toSet());
   }
 
   @GetMapping("/{uid}")

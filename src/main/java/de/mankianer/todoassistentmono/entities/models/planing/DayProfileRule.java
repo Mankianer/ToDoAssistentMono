@@ -1,5 +1,6 @@
 package de.mankianer.todoassistentmono.entities.models.planing;
 
+import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
 import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileConditionContext;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileConditionException;
@@ -13,8 +14,8 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper=false)
-public class DayProfileRule {
+@EqualsAndHashCode(callSuper = false)
+public class DayProfileRule extends DgraphEntity {
 
   private int prio;
   private DayProfile dayProfile;
