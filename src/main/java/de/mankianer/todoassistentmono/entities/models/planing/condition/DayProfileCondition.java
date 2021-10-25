@@ -142,10 +142,10 @@ public abstract class DayProfileCondition extends DgraphMultiClassEntity impleme
   private boolean validateNumber(ParameterType parameterType, Object value) {
     if (value instanceof Integer) {
       int val = (Integer) value;
-      return parameterType.allowedValues.contains("" + val);
+      return parameterType.allowedValues.contains(val);
     } else if (value instanceof Double) {
       double val = (Double) value;
-      return parameterType.allowedValues.contains("" + val);
+      return parameterType.allowedValues.contains(val);
     }
     return false;
   }
@@ -154,13 +154,9 @@ public abstract class DayProfileCondition extends DgraphMultiClassEntity impleme
     NUMBER, STRING, LIST;
     @Getter
     @Setter
-    List<String> allowedValues = null;
+    List<? extends Object> allowedValues = null;
 
     ParameterType() {
-    }
-
-    ParameterType(List<String> allowedValues) {
-      this.allowedValues = allowedValues;
     }
   }
 
