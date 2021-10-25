@@ -1,4 +1,4 @@
-package de.mankianer.todoassistentmono.entities.models;
+package de.mankianer.todoassistentmono.utils.dgraph.entities;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

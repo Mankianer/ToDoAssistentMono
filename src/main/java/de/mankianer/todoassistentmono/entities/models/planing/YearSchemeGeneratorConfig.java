@@ -1,7 +1,7 @@
 package de.mankianer.todoassistentmono.entities.models.planing;
 
-import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
 import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;

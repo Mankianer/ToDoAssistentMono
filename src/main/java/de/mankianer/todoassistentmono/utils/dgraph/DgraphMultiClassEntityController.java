@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;

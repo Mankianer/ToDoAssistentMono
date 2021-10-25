@@ -1,4 +1,4 @@
-package de.mankianer.todoassistentmono.entities.models;
+package de.mankianer.todoassistentmono.utils.dgraph.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.lang.reflect.Field;

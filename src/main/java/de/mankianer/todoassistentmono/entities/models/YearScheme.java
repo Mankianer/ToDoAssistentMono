@@ -2,6 +2,7 @@ package de.mankianer.todoassistentmono.entities.models;
 
 import com.google.appengine.repackaged.org.codehaus.jackson.annotate.JsonIgnore;
 import de.mankianer.todoassistentmono.entities.models.dayschemes.DayScheme;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;

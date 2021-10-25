@@ -1,6 +1,6 @@
 package de.mankianer.todoassistentmono.utils.dgraph.query;
 
-import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;

@@ -1,5 +1,6 @@
 package de.mankianer.todoassistentmono.entities.models;
 
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;

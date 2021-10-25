@@ -1,7 +1,7 @@
 package de.mankianer.todoassistentmono.entities.models.planing.condition;
 
 import com.google.appengine.repackaged.org.codehaus.jackson.annotate.JsonIgnore;
-import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

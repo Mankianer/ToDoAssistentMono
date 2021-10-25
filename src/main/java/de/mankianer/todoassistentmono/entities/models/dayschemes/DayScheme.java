@@ -1,8 +1,8 @@
 package de.mankianer.todoassistentmono.entities.models.dayschemes;
 
 import de.mankianer.todoassistentmono.entities.models.DayContext;
-import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
 import de.mankianer.todoassistentmono.entities.models.TimeSlot;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;

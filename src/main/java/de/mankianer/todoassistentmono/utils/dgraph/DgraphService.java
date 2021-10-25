@@ -2,7 +2,7 @@ package de.mankianer.todoassistentmono.utils.dgraph;
 
 import com.google.gson.Gson;
 import de.mankianer.todoassistentmono.config.dgraph.Schema;
-import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphGrpc;
 import io.dgraph.DgraphGrpc.DgraphStub;

@@ -1,8 +1,8 @@
 package de.mankianer.todoassistentmono.utils.dgraph.query;
 
-import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
-import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.DGraphUtils;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryRootFilter.RootTypes;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

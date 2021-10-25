@@ -2,6 +2,7 @@ package de.mankianer.todoassistentmono.entities.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mankianer.todoassistentmono.entities.interfaces.CalendarEntryInterface;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;

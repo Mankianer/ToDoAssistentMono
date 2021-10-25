@@ -1,8 +1,8 @@
 package de.mankianer.todoassistentmono.entities.models.dayprofiles;
 
 import de.mankianer.todoassistentmono.entities.models.DayContext;
-import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
 import de.mankianer.todoassistentmono.entities.models.dayschemes.DayScheme;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

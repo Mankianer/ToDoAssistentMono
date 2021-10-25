@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import de.mankianer.todoassistentmono.entities.models.DgraphMultiClassEntity;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.JSDayProfileCondition;
 import de.mankianer.todoassistentmono.planing.DayProfileConditionController;
 import de.mankianer.todoassistentmono.repos.DayProfileConditionRepo;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
 import java.util.Map;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,10 @@
 package de.mankianer.todoassistentmono.entities.models.planing;
 
-import de.mankianer.todoassistentmono.entities.models.DgraphEntity;
 import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileCondition;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileConditionContext;
 import de.mankianer.todoassistentmono.entities.models.planing.condition.DayProfileConditionException;
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,5 +1,6 @@
 package de.mankianer.todoassistentmono.entities.models;
 
+import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
