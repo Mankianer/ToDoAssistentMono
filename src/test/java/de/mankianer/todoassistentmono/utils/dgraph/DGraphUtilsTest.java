@@ -10,6 +10,7 @@ import de.mankianer.todoassistentmono.entities.models.planing.condition.impl.JSD
 import de.mankianer.todoassistentmono.planing.DayProfileConditionController;
 import de.mankianer.todoassistentmono.repos.DayProfileConditionRepo;
 import java.util.Map;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -34,6 +35,7 @@ class DGraphUtilsTest {
     assertEquals("test", DGraphUtils.parseMultiClassIdentifierFromJson(json));
   }
 
+  @Order(-1)
   @Test
   void findMultiClassWithPath() {
     //Unregisterd on DGraphRepo
