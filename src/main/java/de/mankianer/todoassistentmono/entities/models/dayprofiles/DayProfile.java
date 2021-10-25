@@ -22,8 +22,6 @@ public class DayProfile extends DgraphEntity {
   @NonNull
   private String name;
 
-  private DayScheme planedDayScheme;
-
   public DayScheme planDayScheme(DayContext context) {
     return null;
   }

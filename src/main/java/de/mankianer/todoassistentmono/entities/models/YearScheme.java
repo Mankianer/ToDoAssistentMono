@@ -1,7 +1,7 @@
 package de.mankianer.todoassistentmono.entities.models;
 
 import com.google.appengine.repackaged.org.codehaus.jackson.annotate.JsonIgnore;
-import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
+import de.mankianer.todoassistentmono.entities.models.dayschemes.DayScheme;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @EqualsAndHashCode(callSuper=false)
 public class YearScheme extends DgraphEntity {
 
-  private List<DayProfile> allDayProfiles = new ArrayList<>();
+  private List<DayScheme> allDaySchemes = new ArrayList<>();
   @NonNull
   private Integer year;
 

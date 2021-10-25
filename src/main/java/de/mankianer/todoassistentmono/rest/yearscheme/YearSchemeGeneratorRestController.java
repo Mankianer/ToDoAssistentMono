@@ -3,12 +3,10 @@ package de.mankianer.todoassistentmono.rest.yearscheme;
 import de.mankianer.todoassistentmono.entities.models.YearScheme;
 import de.mankianer.todoassistentmono.planing.generators.SimpleYearSchemeGenerator;
 import de.mankianer.todoassistentmono.repos.YearSchemeRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/yearscheme/generator")
 public class YearSchemeGeneratorRestController {
 
-  private SimpleYearSchemeGenerator simpleYearSchemeGenerator;
+  private final SimpleYearSchemeGenerator simpleYearSchemeGenerator;
   private final YearSchemeRepo yearSchemeRepo;
 
-  public YearSchemeGeneratorRestController(YearSchemeRepo yearSchemeRepo) {
-
-    simpleYearSchemeGenerator = new SimpleYearSchemeGenerator();
+  public YearSchemeGeneratorRestController(YearSchemeRepo yearSchemeRepo,
+      SimpleYearSchemeGenerator simpleYearSchemeGenerator) {
     this.yearSchemeRepo = yearSchemeRepo;
+    this.simpleYearSchemeGenerator = simpleYearSchemeGenerator;
   }
 
   @PostMapping("/{year}/save")

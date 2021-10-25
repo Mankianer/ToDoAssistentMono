@@ -15,11 +15,12 @@ import org.javatuples.Triplet;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public abstract class DayProfileCondition extends DgraphMultiClassEntity implements
-    DayProfileConditionInterface {
+public abstract class DayProfileCondition extends DgraphMultiClassEntity {
 
   private String name = "";
 
+  public abstract boolean evaluate(DayProfileConditionContext context)
+      throws DayProfileConditionException;
 
   public static Integer getIntegerFromNumber(String name, Map<String, ?> values) {
     Object ret = values.get(name);

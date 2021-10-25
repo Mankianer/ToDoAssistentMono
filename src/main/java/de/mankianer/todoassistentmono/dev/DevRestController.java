@@ -58,15 +58,18 @@ public class DevRestController {
   private final GoogleCalendarService calendarService;
   private final TimeSlotsRepo timeSlotComponent;
   private final DayProfileConditionController dayProfileConditionController;
+  private final SimpleYearSchemeGenerator simpleYearSchemeGenerator;
 
   public DevRestController(DgraphService dgraph,
       GoogleService googleService, GoogleCalendarService calendarService,
-      TimeSlotsRepo timeSlotComponent, DayProfileConditionController dayProfileConditionController) {
+      TimeSlotsRepo timeSlotComponent, DayProfileConditionController dayProfileConditionController,
+      SimpleYearSchemeGenerator simpleYearSchemeGenerator) {
     this.dgraph = dgraph;
     this.googleService = googleService;
     this.calendarService = calendarService;
     this.timeSlotComponent = timeSlotComponent;
     this.dayProfileConditionController = dayProfileConditionController;
+    this.simpleYearSchemeGenerator = simpleYearSchemeGenerator;
   }
 
   @PostConstruct
@@ -95,16 +98,16 @@ public class DevRestController {
 
   @GetMapping("yearscheme/simple/{year}/")
   public YearScheme getSimpleYearScheme(@PathVariable("year") int year) {
-    return new SimpleYearSchemeGenerator().createYearScheme(year);
+    return simpleYearSchemeGenerator.createYearScheme(year);
   }
 
   @GetMapping(value = "gson/", produces = "application/json")
   public String getGsonTest() {
 
     return new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
-                .registerTypeAdapter(LocalDateTime.class,new LocalDateTimeTypeAdapter()).create()
-              .toJson(new SimpleYearSchemeGenerator().createYearScheme(2021));
+        .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter()).create()
+        .toJson(simpleYearSchemeGenerator.createYearScheme(2021));
   }
 
 
