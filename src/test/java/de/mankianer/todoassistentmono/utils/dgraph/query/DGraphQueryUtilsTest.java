@@ -59,15 +59,6 @@ class DGraphQueryUtilsTest {
   }
 
   @Test
-  void createQueryString() {
-    assertEquals("""
-        query queryName($uid: string) {
-         functionName(func: uid($uid)) {
-        fieldsPart  }
-        }""", DGraphQueryUtils.createQueryString("fieldsPart", "queryName", " functionName"));
-  }
-
-  @Test
   void convertQueryMapToField() {
     assertEquals("""
         uid

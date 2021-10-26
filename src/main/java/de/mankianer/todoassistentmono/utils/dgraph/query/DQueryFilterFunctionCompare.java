@@ -15,14 +15,14 @@ public class DQueryFilterFunctionCompare extends DQueryFilterFunction {
   private DGraphType paramType;
 
   @NonNull
-  private RootTypes rootTypes;
+  private DQueryFilterFunctionCompare.CompareTypes compareTypes;
 
   @Override
   public String buildFilterFunctionString() {
-    return rootTypes.getName() + "(" + fieldName + ", $" + paramName + ")";
+    return compareTypes.getName() + "(" + fieldName + ", $" + paramName + ")";
   }
 
-  public enum RootTypes {
+  public enum CompareTypes {
     EQUALS("eq"),
     GREATER_OR_EQUALS("ge"),
     GREATER("gt"),
@@ -32,7 +32,7 @@ public class DQueryFilterFunctionCompare extends DQueryFilterFunction {
     @Getter
     private String name;
 
-    RootTypes(String name) {
+    CompareTypes(String name) {
 
       this.name = name;
     }

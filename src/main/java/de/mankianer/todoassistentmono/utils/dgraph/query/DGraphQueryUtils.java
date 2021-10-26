@@ -3,20 +3,37 @@ package de.mankianer.todoassistentmono.utils.dgraph.query;
 import de.mankianer.todoassistentmono.utils.dgraph.DGraphUtils;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
-import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryFilterFunctionCompare.RootTypes;
+import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryChainedFilterFunction.FilterConnection;
+import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryFilter.DQueryFilterBuilder;
+import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryFilterFunctionCompare.CompareTypes;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class DGraphQueryUtils {
+
+  /**
+   * @param queryFieldMap values to be used in Query
+   * @return a Query for request Dgraph
+   */
+  public static DQuery createFindByAndFilterFunctionsQuery(Map<String, Map> queryFieldMap,
+      @NonNull DQueryFilterFunction rootFilterFunction, DQueryFilterFunction... filterFunctions) {
+    DQueryFunction function = getQueryFunctionByFunctionNameAndAndFilterFunctions("findFilters",
+        rootFilterFunction, filterFunctions);
+    return DQuery.builder().queryname("findFilters").queryMap(queryFieldMap).function(function)
+        .build();
+  }
 
   /**
    * @param filedName searching DgraphEntity field
@@ -46,45 +63,73 @@ public class DGraphQueryUtils {
         .build();
   }
 
-  public static DQueryFunction getQueryFunctionByRootFilterAndFunctionName(
+  private static DQueryFunction getQueryFunctionByRootFilterAndFunctionName(
       DQueryRootFilter rootFilter, String functionName) {
-    return DQueryFunction.builder().functionName(functionName)
-        .queryRootFilter(rootFilter).build();
+    return getQueryFunctionByRootFilterAndFilterAndFunctionName(rootFilter, null, functionName);
   }
 
-  public static DQueryRootFilter getQueryRootFilter_FieldEqualParam(String filedName,
+  private static DQueryFunction getQueryFunctionByRootFilterAndFilterAndFunctionName(
+      DQueryRootFilter rootFilter, DQueryFilter filter, String functionName) {
+    return DQueryFunction.builder().functionName(functionName)
+        .queryRootFilter(rootFilter).filter(filter).build();
+  }
+
+  private static DQueryFunction getQueryFunctionByFunctionNameAndAndFilterFunctions(
+      String functionName,
+      @NonNull DQueryFilterFunction rootFilterFunction, DQueryFilterFunction... filterFunctions) {
+    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(rootFilterFunction)
+        .build();
+    DQueryFilter filter = getQueryFilterByAndFilterFunctions(filterFunctions);
+    return getQueryFunctionByRootFilterAndFilterAndFunctionName(rootFilter, filter, functionName);
+  }
+
+  private static DQueryFilter getQueryFilterByAndFilterFunctions(
+      DQueryFilterFunction... filterFunctions) {
+    DQueryFilterBuilder dQueryFilterBuilder = DQueryFilter.builder();
+    if (filterFunctions.length >= 1) {
+      dQueryFilterBuilder.firstFilterFunction(filterFunctions[0]);
+      List<DQueryFilterFunction> dQueryFilterFunctions = new ArrayList<>(List.of(filterFunctions));
+      dQueryFilterFunctions.remove(0);
+      dQueryFilterBuilder.chainedFilter(dQueryFilterFunctions.stream().map(
+          filterFunction -> DQueryChainedFilterFunction.builder().filterFunction(filterFunction)
+              .filterConnection(
+                  FilterConnection.AND).build()).collect(Collectors.toList()));
+    }
+    return dQueryFilterBuilder.build();
+  }
+
+  private static DQueryRootFilter getQueryRootFilter_FieldEqualParam(String filedName,
       String paramName, DGraphType paramType) {
-    DQueryFilterFunctionCompare filterFunction = DQueryFilterFunctionCompare.builder().fieldName(
+    DQueryFilterFunctionCompare filterFunction = getFieldEqualParamFilterFunction(filedName,
+        paramName, paramType);
+    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
+        .build();
+    return rootFilter;
+  }
+
+  private static DQueryRootFilter getQueryRootFilter_Uid() {
+    DQueryFilterFunctionUid filterFunction = getUidFilterFunction();
+    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
+        .build();
+    return rootFilter;
+  }
+
+  public static DQueryFilterFunctionUid getUidFilterFunction() {
+    return DQueryFilterFunctionUid.builder().fieldName("uid")
+        .paramName("uid").build();
+  }
+
+  public static DQueryFilterFunctionCompare getFieldEqualParamFilterFunction(String filedName,
+      String paramName, DGraphType paramType) {
+    return getFieldCompareParamFilterFunction(filedName, paramName, paramType, CompareTypes.EQUALS);
+  }
+
+  public static DQueryFilterFunctionCompare getFieldCompareParamFilterFunction(String filedName,
+      String paramName, DGraphType paramType, CompareTypes compareType) {
+    return DQueryFilterFunctionCompare.builder().fieldName(
             filedName)
         .paramName(paramName).paramType(paramType)
-        .rootTypes(RootTypes.EQUALS).build();
-    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
-        .build();
-    return rootFilter;
-  }
-
-  public static DQueryRootFilter getQueryRootFilter_Uid() {
-    DQueryFilterFunctionUid filterFunction = DQueryFilterFunctionUid.builder().fieldName("uid")
-        .paramName("uid").build();
-    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
-        .build();
-    return rootFilter;
-  }
-
-  /**
-   * @param fields fieldspart of the QueryString
-   * @param queryname name of Query
-   * @param queryfunctionname name of QueryFunction
-   * @return the Query as String
-   */
-  public static String createQueryString(String fields, String queryname,
-      String queryfunctionname) {
-    return "query " + queryname + "($uid: string) {\n"
-        + queryfunctionname + "(func: uid($uid)) {\n"
-        + fields +
-        """
-              }
-            }""";
+        .compareTypes(compareType).build();
   }
 
 
