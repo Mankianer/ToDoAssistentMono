@@ -44,12 +44,9 @@ public class DGraphQueryUtils {
   public static DQuery createFindByValueQuery(String filedName, String paramName,
       DGraphType paramType,
       Map<String, Map> queryFieldMap) {
-    DQueryRootFilter rootFilter = getQueryRootFilter_FieldEqualParam(filedName, paramName,
+    DQueryFilterFunction filterFunction = getFieldEqualParamFilterFunction(filedName, paramName,
         paramType);
-    DQueryFunction function = getQueryFunctionByRootFilterAndFunctionName(rootFilter,
-        "findByValue");
-    return DQuery.builder().queryname("findByValue").queryMap(queryFieldMap).function(function)
-        .build();
+    return createFindByAndFilterFunctionsQuery(queryFieldMap, filterFunction);
   }
 
   /**
@@ -57,16 +54,10 @@ public class DGraphQueryUtils {
    * @return a Query for request Dgraph
    */
   public static DQuery createFindByUidQuery(Map<String, Map> queryFieldMap) {
-    DQueryRootFilter rootFilter = getQueryRootFilter_Uid();
-    DQueryFunction function = getQueryFunctionByRootFilterAndFunctionName(rootFilter, "findByUid");
-    return DQuery.builder().queryname("findByUid").queryMap(queryFieldMap).function(function)
-        .build();
+    DQueryFilterFunction filterFunction = getUidFilterFunction();
+    return createFindByAndFilterFunctionsQuery(queryFieldMap, filterFunction);
   }
 
-  private static DQueryFunction getQueryFunctionByRootFilterAndFunctionName(
-      DQueryRootFilter rootFilter, String functionName) {
-    return getQueryFunctionByRootFilterAndFilterAndFunctionName(rootFilter, null, functionName);
-  }
 
   private static DQueryFunction getQueryFunctionByRootFilterAndFilterAndFunctionName(
       DQueryRootFilter rootFilter, DQueryFilter filter, String functionName) {
@@ -85,8 +76,8 @@ public class DGraphQueryUtils {
 
   private static DQueryFilter getQueryFilterByAndFilterFunctions(
       DQueryFilterFunction... filterFunctions) {
-    DQueryFilterBuilder dQueryFilterBuilder = DQueryFilter.builder();
-    if (filterFunctions.length >= 1) {
+    if (filterFunctions.length > 0) {
+      DQueryFilterBuilder dQueryFilterBuilder = DQueryFilter.builder();
       dQueryFilterBuilder.firstFilterFunction(filterFunctions[0]);
       List<DQueryFilterFunction> dQueryFilterFunctions = new ArrayList<>(List.of(filterFunctions));
       dQueryFilterFunctions.remove(0);
@@ -94,24 +85,9 @@ public class DGraphQueryUtils {
           filterFunction -> DQueryChainedFilterFunction.builder().filterFunction(filterFunction)
               .filterConnection(
                   FilterConnection.AND).build()).collect(Collectors.toList()));
+      return dQueryFilterBuilder.build();
     }
-    return dQueryFilterBuilder.build();
-  }
-
-  private static DQueryRootFilter getQueryRootFilter_FieldEqualParam(String filedName,
-      String paramName, DGraphType paramType) {
-    DQueryFilterFunctionCompare filterFunction = getFieldEqualParamFilterFunction(filedName,
-        paramName, paramType);
-    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
-        .build();
-    return rootFilter;
-  }
-
-  private static DQueryRootFilter getQueryRootFilter_Uid() {
-    DQueryFilterFunctionUid filterFunction = getUidFilterFunction();
-    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
-        .build();
-    return rootFilter;
+    return null;
   }
 
   public static DQueryFilterFunctionUid getUidFilterFunction() {

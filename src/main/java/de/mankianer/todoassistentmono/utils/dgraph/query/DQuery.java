@@ -27,7 +27,7 @@ public class DQuery {
   }
 
   public String buildQueryString() {
-    return "query " + getQueryname() + "(" + buildQueryParamList() + " ) {\n" +
+    return "query " + getQueryname() + "(" + buildQueryParamList() + ") {\n" +
         getFunction().buildFunctionString() + "{\n" +
         DGraphQueryUtils.convertQueryMapToField(getQueryMap()) +
         "}\n}";
