@@ -2,6 +2,7 @@ package de.mankianer.todoassistentmono.utils.dgraph.query;
 
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -15,24 +16,24 @@ public class DQuery {
   @NonNull
   private String queryname;
   @NonNull
-  private String functionName;
-  @NonNull
   private Class<? extends DgraphEntity> actualTypeArgument;
   @NonNull
   private Map queryMap;
   @NonNull
-  private String fieldName, paramName;
-  @NonNull
   private DGraphType paramType;
+
   @NonNull
-  private DQueryRootFilter.RootTypes rootFilter;
+  private DQueryFunction function;
+
+  public String buildQueryParamList() {
+    return function.getParamList().entrySet().stream()
+        .map(e -> "$ " + e.getKey() + ": " + e.getValue().name() + "")
+        .collect(Collectors.joining(", "));
+  }
 
   public String buildQueryString() {
-    DQueryFunction function = DQueryFunction.builder().functionName(functionName).queryRootFilter(
-        DQueryRootFilter.builder().fieldName(fieldName).paramName(paramName).rootTypes(rootFilter)
-            .build()).build();
-    return "query " + queryname + "($" + paramName + ": " + paramType.name + " ) {\n" +
-        function.buildFunctionString() + " {\n" +
+    return "query " + getQueryname() + "($" + buildQueryParamList() + " ) {\n" +
+        getFunction().buildFunctionString() + " {\n" +
         DGraphQueryUtils.convertQueryMapToField(getQueryMap()) +
         "}\n}";
   }

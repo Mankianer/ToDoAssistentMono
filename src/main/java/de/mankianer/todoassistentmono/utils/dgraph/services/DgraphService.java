@@ -1,7 +1,8 @@
-package de.mankianer.todoassistentmono.utils.dgraph;
+package de.mankianer.todoassistentmono.utils.dgraph.services;
 
 import com.google.gson.Gson;
-import de.mankianer.todoassistentmono.config.dgraph.Schema;
+import de.mankianer.todoassistentmono.utils.dgraph.DgraphRepo;
+import de.mankianer.todoassistentmono.utils.dgraph.config.Schema;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphGrpc;

@@ -19,6 +19,6 @@ public class DayProfileRestController {
 
   @GetMapping("/allNames")
   public Set<String> getAllDayProfilesNameList() {
-    return dayProfileController.getDayProfileMap().keySet();
+    return dayProfileController.getDayProfileNameDgraphMap().keySet();
   }
 }

@@ -30,7 +30,7 @@ public class YearSchemeGeneratorConfigRestController {
     YearSchemeGeneratorConfig oldConfig = yearSchemeGeneratorConfigController.getConfigByTitle(
         title);
     if (oldConfig == null || override) {
-      //TODO validation von yearSchemeGeneratorConfigController
+      //TODO validation von yearSchemeGeneratorConfigController - darf keine DayProfiles Anlegen
       newConfig = yearSchemeGeneratorConfigController.saveToDB(
           newConfig);
       return ResponseEntity.ok(newConfig);

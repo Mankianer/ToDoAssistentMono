@@ -2,7 +2,7 @@ package de.mankianer.todoassistentmono.repos;
 
 import de.mankianer.todoassistentmono.entities.models.planing.YearSchemeGeneratorConfig;
 import de.mankianer.todoassistentmono.utils.dgraph.DgraphRepo;
-import de.mankianer.todoassistentmono.utils.dgraph.DgraphService;
+import de.mankianer.todoassistentmono.utils.dgraph.services.DgraphService;
 import org.springframework.stereotype.Component;
 
 @Component

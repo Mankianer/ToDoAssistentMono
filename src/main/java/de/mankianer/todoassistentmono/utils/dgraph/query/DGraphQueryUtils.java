@@ -3,7 +3,7 @@ package de.mankianer.todoassistentmono.utils.dgraph.query;
 import de.mankianer.todoassistentmono.utils.dgraph.DGraphUtils;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
-import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryRootFilter.RootTypes;
+import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryFilterFunctionCompare.RootTypes;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;

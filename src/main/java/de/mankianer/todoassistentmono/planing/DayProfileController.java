@@ -4,7 +4,9 @@ import de.mankianer.todoassistentmono.entities.models.dayprofiles.DayProfile;
 import de.mankianer.todoassistentmono.entities.models.dayprofiles.SimpleDayProfile;
 import de.mankianer.todoassistentmono.repos.DayProfileRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.DgraphMultiClassEntityController;
+import de.mankianer.todoassistentmono.utils.dgraph.services.DgraphConfigService;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
@@ -14,9 +16,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class DayProfileController extends DgraphMultiClassEntityController<DayProfile> {
 
+  private final DgraphConfigService dgraphConfigService;
+  private Map<String, DayProfile> loadedDayProfiles;
 
-  public DayProfileController(DayProfileRepo repo) {
+  public DayProfileController(DayProfileRepo repo, DgraphConfigService dgraphConfigService) {
     super(repo);
+    this.dgraphConfigService = dgraphConfigService;
+    loadedDayProfiles = new HashMap<>();
   }
 
   @PostConstruct
@@ -24,12 +30,18 @@ public class DayProfileController extends DgraphMultiClassEntityController<DayPr
     register(SimpleDayProfile.class);
   }
 
-  public Map<String, Class<? extends DayProfile>> getDayProfileMap() {
-    return getResolverMap();
+  @Override
+  protected void onRegister(DayProfile instance, Class clazz) {
+    instance = dgraphConfigService.findOrCreate("dayProfileMap", instance.getName(), instance);
+    loadedDayProfiles.put(instance.getName(), instance);
+  }
+
+  public Map<String, DayProfile> getDayProfileNameDgraphMap() {
+    return loadedDayProfiles;
   }
 
   public DayProfile getDayProfileByDate(LocalDate date) {
-    return new SimpleDayProfile();
+    return new SimpleDayProfile(); //TODO richtigen DayProfile zurück geben
   }
 
   public void createNewDayProfile() {

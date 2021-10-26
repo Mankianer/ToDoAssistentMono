@@ -1,4 +1,4 @@
-package de.mankianer.todoassistentmono.config.dgraph;
+package de.mankianer.todoassistentmono.utils.dgraph.config;
 
 /**
  * Schema for DGraph: Types and Predicates
@@ -9,6 +9,7 @@ public class Schema {
 
   public static String PREDICATES = """
       <year>: int @index(int) .
+      <_ConfigName>: string @index(hash) .
       """;
 
   public static String TYPES = """
