@@ -42,7 +42,7 @@ class DGraphQueryUtilsTest {
         }
         }""";
     assertEquals(findByValueQuery,
-        DGraphQueryUtils.createFindByValueQuery("year", "year", YearScheme.class,
+        DGraphQueryUtils.createFindByValueQuery("year", "year", DGraphType.INT,
                 DGraphQueryUtils.getFieldMap(YearScheme.class, Map.of(), ""))
             .buildQueryString());
   }

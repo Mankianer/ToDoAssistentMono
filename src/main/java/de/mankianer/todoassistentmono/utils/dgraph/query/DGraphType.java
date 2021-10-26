@@ -1,5 +1,7 @@
 package de.mankianer.todoassistentmono.utils.dgraph.query;
 
+import lombok.Getter;
+
 public enum DGraphType {
   STRING("string"),
   INT("int"),
@@ -9,6 +11,7 @@ public enum DGraphType {
   GEO("geo"),
   BOOLEAN("bool");
 
+  @Getter
   public String name;
 
   private DGraphType(String name) {

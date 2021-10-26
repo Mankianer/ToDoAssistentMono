@@ -36,7 +36,7 @@ public class DQueryFunction {
 
   public String buildFunctionString() {
     return functionName + " (" + queryRootFilter.buildRootFilterString() + ") "
-        + filter.buildFilterString();
+        + ((filter != null) ? filter.buildFilterString() : "");
   }
 
 

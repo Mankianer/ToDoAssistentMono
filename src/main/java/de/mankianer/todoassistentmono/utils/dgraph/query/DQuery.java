@@ -22,13 +22,13 @@ public class DQuery {
 
   public String buildQueryParamList() {
     return function.getParamList().entrySet().stream()
-        .map(e -> "$ " + e.getKey() + ": " + e.getValue().name() + "")
+        .map(e -> "$" + e.getKey() + ": " + e.getValue().getName() + "")
         .collect(Collectors.joining(", "));
   }
 
   public String buildQueryString() {
-    return "query " + getQueryname() + "($" + buildQueryParamList() + " ) {\n" +
-        getFunction().buildFunctionString() + " {\n" +
+    return "query " + getQueryname() + "(" + buildQueryParamList() + " ) {\n" +
+        getFunction().buildFunctionString() + "{\n" +
         DGraphQueryUtils.convertQueryMapToField(getQueryMap()) +
         "}\n}";
   }

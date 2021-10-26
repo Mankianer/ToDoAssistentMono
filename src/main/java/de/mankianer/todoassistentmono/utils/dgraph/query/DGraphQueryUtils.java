@@ -25,8 +25,10 @@ public class DGraphQueryUtils {
    * @return a Query for request Dgraph
    */
   public static DQuery createFindByValueQuery(String filedName, String paramName,
+      DGraphType paramType,
       Map<String, Map> queryFieldMap) {
-    DQueryRootFilter rootFilter = getQueryRootFilter_FieldEqualParam(filedName, paramName);
+    DQueryRootFilter rootFilter = getQueryRootFilter_FieldEqualParam(filedName, paramName,
+        paramType);
     DQueryFunction function = getQueryFunctionByRootFilterAndFunctionName(rootFilter,
         "findByValue");
     return DQuery.builder().queryname("findByValue").queryMap(queryFieldMap).function(function)
@@ -51,10 +53,10 @@ public class DGraphQueryUtils {
   }
 
   public static DQueryRootFilter getQueryRootFilter_FieldEqualParam(String filedName,
-      String paramName) {
+      String paramName, DGraphType paramType) {
     DQueryFilterFunctionCompare filterFunction = DQueryFilterFunctionCompare.builder().fieldName(
             filedName)
-        .paramName(paramName)
+        .paramName(paramName).paramType(paramType)
         .rootTypes(RootTypes.EQUALS).build();
     DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
         .build();

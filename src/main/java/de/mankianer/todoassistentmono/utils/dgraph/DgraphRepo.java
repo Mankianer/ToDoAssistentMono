@@ -36,6 +36,16 @@ public class DgraphRepo<T extends DgraphEntity> {
     gson = DgraphRepo.gsonBuilder.create();
   }
 
+  /**
+   * only test purpose
+   */
+  public static void reset() {
+    resolverMap = new HashMap<>();
+    gsonBuilder = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeTypeAdapter());
+    gson = DgraphRepo.gsonBuilder.create();
+  }
+
   private static Map<Class<? extends DgraphMultiClassEntity>, Function<String, Class<? extends DgraphMultiClassEntity>>> resolverMap = new HashMap<>();
   private static GsonBuilder gsonBuilder;
   private static Gson gson;
@@ -115,7 +125,7 @@ public class DgraphRepo<T extends DgraphEntity> {
       throws NoSuchFieldException {
     Map queryMap = getQueryMap(actualTypeArgument,
         getFindMultiClassIdentifierByPathFunktionByValue(name, value, type));
-    String json = findJsonByValueAndQueryMap(name, value, type, actualTypeArgument, queryMap);
+    String json = findJsonByValueAndQueryMap(name, value, type, queryMap);
 
     T[] byUid = gson.fromJson(json, (Type) actualTypeArgument.arrayType());
     return byUid.length > 0 ? byUid[0] : null;
@@ -172,15 +182,15 @@ public class DgraphRepo<T extends DgraphEntity> {
       throws NoSuchFieldException {
     Map<String, Map> valueMap = DGraphQueryUtils.createQueryMapFromPathForMultiClassIdentifier(
         path);
-    String json = findJsonByValueAndQueryMap(name, value, type, actualTypeArgument, valueMap);
+    String json = findJsonByValueAndQueryMap(name, value, type, valueMap);
     String identifier = DGraphUtils.parseMultiClassIdentifierFromJson(json);
     return identifier;
   }
 
   private String findJsonByValueAndQueryMap(String name, String value, DGraphType type,
-      Class<? extends DgraphEntity> actualTypeArgument, Map<String, Map> queryMap)
+      Map<String, Map> queryMap)
       throws NoSuchFieldException {
-    DQuery findByValueQuery = DGraphQueryUtils.createFindByValueQuery(name, name, queryMap);
+    DQuery findByValueQuery = DGraphQueryUtils.createFindByValueQuery(name, name, type, queryMap);
     Map<String, String> vars = Collections.singletonMap("$" + name, value);
     Response response = dgraphClient.newReadOnlyTransaction()
         .queryWithVars(findByValueQuery.buildQueryString(), vars);
