@@ -127,16 +127,16 @@ public class DgraphRepo<T extends DgraphEntity> {
   }
 
   private String findJsonByUidAndQueryMap(String uid, Map<String, Map> queryMap) {
-    String fields = DGraphQueryUtils.convertQueryMapToField(queryMap);
-    String queryname = "findByUid";
-    String queryfunctionname = queryname;
-    String query = DGraphQueryUtils.createQueryString(fields, queryname, queryname);
+    DQuery findByUidQuery = DGraphQueryUtils.createFindByUidQuery(queryMap);
+    String query = findByUidQuery.buildQueryString();
+
     Map<String, String> vars = Collections.singletonMap("$uid", uid);
     Response response = dgraphClient.newReadOnlyTransaction()
         .queryWithVars(query, vars);
 
     String json = response.getJson().toStringUtf8();
-    json = json.substring(("{\"" + queryfunctionname + "\":").length(), json.length() - 1);
+    json = json.substring(("{\"" + findByUidQuery.getFunction().getFunctionName() + "\":").length(),
+        json.length() - 1);
     log.debug("response Json:{}", json);
     return json;
   }
@@ -180,14 +180,14 @@ public class DgraphRepo<T extends DgraphEntity> {
   private String findJsonByValueAndQueryMap(String name, String value, DGraphType type,
       Class<? extends DgraphEntity> actualTypeArgument, Map<String, Map> queryMap)
       throws NoSuchFieldException {
-    DQuery findByValueQuery = DGraphQueryUtils.createFindByValueQuery(name, name,
-        actualTypeArgument, queryMap);
+    DQuery findByValueQuery = DGraphQueryUtils.createFindByValueQuery(name, name, queryMap);
     Map<String, String> vars = Collections.singletonMap("$" + name, value);
     Response response = dgraphClient.newReadOnlyTransaction()
         .queryWithVars(findByValueQuery.buildQueryString(), vars);
 
     String json = response.getJson().toStringUtf8();
-    json = json.substring(("{\"" + findByValueQuery.getFunctionName() + "\":").length(),
+    json = json.substring(
+        ("{\"" + findByValueQuery.getFunction().getFunctionName() + "\":").length(),
         json.length() - 1);
     log.debug("response Json:{}", json);
     return json;

@@ -1,13 +1,17 @@
 package de.mankianer.todoassistentmono.utils.dgraph.query;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
 
+@Getter
 @Builder
 public class DQueryFilterFunctionUid extends DQueryFilterFunction {
 
-  public DQueryFilterFunctionUid() {
-    super(DGraphType.STRING);
-  }
+  @NonNull
+  private String fieldName, paramName;
+
+  private DGraphType paramType = DGraphType.STRING;
 
   @Override
   public String buildFilterFunctionString() {

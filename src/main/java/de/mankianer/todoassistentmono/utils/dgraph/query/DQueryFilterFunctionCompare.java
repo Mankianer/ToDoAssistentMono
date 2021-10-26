@@ -9,7 +9,10 @@ import lombok.NonNull;
 public class DQueryFilterFunctionCompare extends DQueryFilterFunction {
 
   @NonNull
-  private String fieldName;
+  private String fieldName, paramName;
+
+  @NonNull
+  private DGraphType paramType;
 
   @NonNull
   private RootTypes rootTypes;

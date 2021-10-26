@@ -1,6 +1,5 @@
 package de.mankianer.todoassistentmono.utils.dgraph.query;
 
-import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Builder;
@@ -16,11 +15,7 @@ public class DQuery {
   @NonNull
   private String queryname;
   @NonNull
-  private Class<? extends DgraphEntity> actualTypeArgument;
-  @NonNull
   private Map queryMap;
-  @NonNull
-  private DGraphType paramType;
 
   @NonNull
   private DQueryFunction function;

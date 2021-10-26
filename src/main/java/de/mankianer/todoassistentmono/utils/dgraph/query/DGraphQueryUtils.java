@@ -19,27 +19,57 @@ import lombok.extern.log4j.Log4j2;
 public class DGraphQueryUtils {
 
   /**
-   *
    * @param filedName searching DgraphEntity field
    * @param paramName searching DgraphQuery parameter
-   * @param actualTypeArgument targeted search Class
    * @param queryFieldMap values to be used in Query
    * @return a Query for request Dgraph
-   * @throws NoSuchFieldException
    */
   public static DQuery createFindByValueQuery(String filedName, String paramName,
-      Class<? extends DgraphEntity> actualTypeArgument, Map<String, Map> queryFieldMap)//TODO Remove actualTypeArgument
-      throws NoSuchFieldException {
-    return DQuery.builder().queryname("findByValue").functionName("findByValue")
-        .actualTypeArgument(actualTypeArgument).fieldName(filedName).paramName(paramName)
-        .queryMap(queryFieldMap)
-        .paramType(findDGraphType(actualTypeArgument.getDeclaredField(filedName).getType()))
-        .rootFilter(
-            RootTypes.EQUALS).build();
+      Map<String, Map> queryFieldMap) {
+    DQueryRootFilter rootFilter = getQueryRootFilter_FieldEqualParam(filedName, paramName);
+    DQueryFunction function = getQueryFunctionByRootFilterAndFunctionName(rootFilter,
+        "findByValue");
+    return DQuery.builder().queryname("findByValue").queryMap(queryFieldMap).function(function)
+        .build();
   }
 
   /**
-   *
+   * @param queryFieldMap values to be used in Query
+   * @return a Query for request Dgraph
+   */
+  public static DQuery createFindByUidQuery(Map<String, Map> queryFieldMap) {
+    DQueryRootFilter rootFilter = getQueryRootFilter_Uid();
+    DQueryFunction function = getQueryFunctionByRootFilterAndFunctionName(rootFilter, "findByUid");
+    return DQuery.builder().queryname("findByUid").queryMap(queryFieldMap).function(function)
+        .build();
+  }
+
+  public static DQueryFunction getQueryFunctionByRootFilterAndFunctionName(
+      DQueryRootFilter rootFilter, String functionName) {
+    return DQueryFunction.builder().functionName(functionName)
+        .queryRootFilter(rootFilter).build();
+  }
+
+  public static DQueryRootFilter getQueryRootFilter_FieldEqualParam(String filedName,
+      String paramName) {
+    DQueryFilterFunctionCompare filterFunction = DQueryFilterFunctionCompare.builder().fieldName(
+            filedName)
+        .paramName(paramName)
+        .rootTypes(RootTypes.EQUALS).build();
+    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
+        .build();
+    return rootFilter;
+  }
+
+  public static DQueryRootFilter getQueryRootFilter_Uid() {
+    DQueryFilterFunctionUid filterFunction = DQueryFilterFunctionUid.builder().fieldName("uid")
+        .paramName("uid").build();
+    DQueryRootFilter rootFilter = DQueryRootFilter.builder().rootFilterFunction(filterFunction)
+        .build();
+    return rootFilter;
+  }
+
+  /**
    * @param fields fieldspart of the QueryString
    * @param queryname name of Query
    * @param queryfunctionname name of QueryFunction
@@ -73,7 +103,6 @@ public class DGraphQueryUtils {
   }
 
   /**
-   *
    * @param queryMap values used to be in Query
    * @return FieldsPart for DGraphQuery
    */
@@ -105,9 +134,10 @@ public class DGraphQueryUtils {
   }
 
   /**
-   * Mapping the Fields of a DgraphEntity for Query in a treeLike Map. Ignorse Fileds with @JsonIgnore
+   * Mapping the Fields of a DgraphEntity for Query in a treeLike Map. Ignorse Fileds with
    *
    * @return Map<S, Map < S, Map < S, . . .>>> if Key is not null it is a DgraphEntity
+   * @JsonIgnore
    * @JsonIgnore annotation.
    */
   public static Map<String, Map> getFieldMap(Class<? extends DgraphEntity> clazz,
@@ -136,14 +166,15 @@ public class DGraphQueryUtils {
         try {
           var fieldInstance = fieldClass.getDeclaredConstructor().newInstance();
           if (fieldInstance instanceof DgraphEntity) {
-            if(fieldInstance instanceof DgraphMultiClassEntity){
+            if (fieldInstance instanceof DgraphMultiClassEntity) {
               Class<? extends DgraphMultiClassEntity> aClass = pathToMultiClassMap.get(path);
               if (aClass != null) {
                 fieldClass = aClass;
               }
             }
             fieldMap.put(field.getName(), getFieldMap(
-                (Class<? extends DgraphEntity>) fieldClass, pathToMultiClassMap, path + "." + field.getName()));
+                (Class<? extends DgraphEntity>) fieldClass, pathToMultiClassMap,
+                path + "." + field.getName()));
           } else {
             fieldMap.put(field.getName(), null);
           }
@@ -160,7 +191,6 @@ public class DGraphQueryUtils {
   }
 
   /**
-   *
    * @param path target path for Identifier
    * @return QueryMap From Path with MultiClassIdentifierQuery
    */
