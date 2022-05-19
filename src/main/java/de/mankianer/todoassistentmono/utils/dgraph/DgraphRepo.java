@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
 import com.google.protobuf.ByteString;
+import com.oracle.truffle.js.runtime.util.Triple;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTimeTypeAdapter;
@@ -11,6 +12,8 @@ import de.mankianer.todoassistentmono.utils.dgraph.gsonadapters.LocalDateTypeAda
 import de.mankianer.todoassistentmono.utils.dgraph.query.DGraphQueryUtils;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DGraphType;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DQuery;
+import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryFilterFunction;
+import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryFilterFunctionCompare;
 import io.dgraph.DgraphClient;
 import io.dgraph.DgraphProto.Mutation;
 import io.dgraph.DgraphProto.Response;
@@ -22,8 +25,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 
@@ -72,6 +77,7 @@ public class DgraphRepo<T extends DgraphEntity> {
         multiClassParent);
     return stringClassFunction != null ? stringClassFunction.apply(identifier) : null;
   }
+  /*****************************/
 
   public DgraphRepo(DgraphClient dgraphClient) {
     this.dgraphClient = dgraphClient;
@@ -131,9 +137,41 @@ public class DgraphRepo<T extends DgraphEntity> {
     return byUid.length > 0 ? byUid[0] : null;
   }
 
+  public T findByMultipleValues(List<Triple<String, String, DGraphType>> valuesList)
+      throws NoSuchFieldException {
+    Map queryMap = getQueryMap(actualTypeArgument,
+        getFindMultiClassIdentifierByPathFunktionByValue(name, value, type));
+    String json = findJsonByValueAndQueryMap(name, value, type, queryMap);
+
+    T[] byUid = gson.fromJson(json, (Type) actualTypeArgument.arrayType());
+    return byUid.length > 0 ? byUid[0] : null;
+  }
+
   private Class<? extends DgraphMultiClassEntity> tryResolveMultiClassEntity(
       String multiClassIdentifier) {
     return DgraphRepo.resolverMap.get(multiClassParent).apply(multiClassIdentifier);
+  }
+
+  private String findJsonByMultipleValuesAndQueryMap(String mainParamName, String mainParamValue, DGraphType mainParamType, List<Triple<String, String, DGraphType>> valuesList,
+      Map<String, Map> queryMap)
+      throws NoSuchFieldException {
+    DQueryFilterFunction rootFilter = DGraphQueryUtils.getFieldEqualParamFilterFunction(
+        mainParamName, mainParamName, mainParamType);
+    List<DQueryFilterFunction> filters = valuesList.stream()
+        .map(t -> DGraphQueryUtils.getFieldEqualParamFilterFunction(
+            t.getFirst(), t.getFirst(), t.getThird())).collect(Collectors.toList());
+    DQuery findByValueQuery = DGraphQueryUtils.createFindByAndFilterFunctionsQuery(rootFilter, queryMap, filters.toArray(new DQueryFilterFunction[0]));
+
+    Map<String, String> vars = valuesList.stream().collect(Collectors.toMap(t -> "$" + t.getFirst(), t -> t.getSecond()));
+    Response response = dgraphClient.newReadOnlyTransaction()
+        .queryWithVars(findByValueQuery.buildQueryString(), vars);
+
+    String json = response.getJson().toStringUtf8();
+    json = json.substring(
+        ("{\"" + findByValueQuery.getFunction().getFunctionName() + "\":").length(),
+        json.length() - 1);
+    log.debug("response Json:{}", json);
+    return json;
   }
 
   private String findJsonByUidAndQueryMap(String uid, Map<String, Map> queryMap) {
@@ -213,11 +251,6 @@ public class DgraphRepo<T extends DgraphEntity> {
         DGraphUtils.findMultiClassParent(targetClass));
     return DGraphQueryUtils.getFieldMap(
         correctTargetClass != null ? correctTargetClass : targetClass, pathToMultiClassMap, "");
-  }
-
-  private Map<String, Class<? extends DgraphMultiClassEntity>> findMultiClassWithPath(
-      Class<? extends DgraphEntity> targetClass, Function<String, String> findIdentifierByPath) {
-    return DGraphUtils.findMultiClassWithPath(targetClass, "", findIdentifierByPath);
   }
 
   public boolean deleteFromDGraphByUid(@NonNull String uid) {

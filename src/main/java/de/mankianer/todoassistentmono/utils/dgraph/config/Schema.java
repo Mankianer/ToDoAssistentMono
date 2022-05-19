@@ -10,6 +10,7 @@ public class Schema {
   public static String PREDICATES = """
       <year>: int @index(int) .
       <_ConfigName>: string @index(hash) .
+      <propertyName>: string @index(hash) .
       """;
 
   public static String TYPES = """

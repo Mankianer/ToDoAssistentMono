@@ -1,6 +1,8 @@
 package de.mankianer.todoassistentmono.utils.dgraph.query;
 
+import de.mankianer.todoassistentmono.utils.dgraph.DGraphMultiClassEntityUtils;
 import de.mankianer.todoassistentmono.utils.dgraph.DGraphUtils;
+import de.mankianer.todoassistentmono.utils.dgraph.DgraphRepo;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.entities.DgraphMultiClassEntity;
 import de.mankianer.todoassistentmono.utils.dgraph.query.DQueryChainedFilterFunction.FilterConnection;
@@ -16,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
@@ -27,8 +30,9 @@ public class DGraphQueryUtils {
    * @param queryFieldMap values to be used in Query
    * @return a Query for request Dgraph
    */
-  public static DQuery createFindByAndFilterFunctionsQuery(Map<String, Map> queryFieldMap,
-      @NonNull DQueryFilterFunction rootFilterFunction, DQueryFilterFunction... filterFunctions) {
+  public static DQuery createFindByAndFilterFunctionsQuery(
+      @NonNull DQueryFilterFunction rootFilterFunction, Map<String, Map> queryFieldMap,
+      DQueryFilterFunction... filterFunctions) {
     DQueryFunction function = getQueryFunctionByFunctionNameAndAndFilterFunctions("findFilters",
         rootFilterFunction, filterFunctions);
     return DQuery.builder().queryname("findFilters").queryMap(queryFieldMap).function(function)
@@ -46,7 +50,7 @@ public class DGraphQueryUtils {
       Map<String, Map> queryFieldMap) {
     DQueryFilterFunction filterFunction = getFieldEqualParamFilterFunction(filedName, paramName,
         paramType);
-    return createFindByAndFilterFunctionsQuery(queryFieldMap, filterFunction);
+    return createFindByAndFilterFunctionsQuery(filterFunction, queryFieldMap);
   }
 
   /**
@@ -55,7 +59,7 @@ public class DGraphQueryUtils {
    */
   public static DQuery createFindByUidQuery(Map<String, Map> queryFieldMap) {
     DQueryFilterFunction filterFunction = getUidFilterFunction();
-    return createFindByAndFilterFunctionsQuery(queryFieldMap, filterFunction);
+    return createFindByAndFilterFunctionsQuery(filterFunction, queryFieldMap);
   }
 
 
@@ -215,11 +219,12 @@ public class DGraphQueryUtils {
 
   /**
    * @param path target path for Identifier
-   * @return QueryMap From Path with MultiClassIdentifierQuery
+   * @return QueryMap From Path with MultiClassIdentifierQuery and uid
    */
   public static Map<String, Map> createQueryMapFromPathForMultiClassIdentifier(String path) {
     Map<String, Map> valueMap = new HashMap<>();
     valueMap.put("multiClassIdentifier", null);
+    valueMap.put("uid", null);
     //baut valueMap für Path auf
     if (path != null && !path.isBlank()) {
       String[] split = path.split("\\.");
@@ -230,5 +235,17 @@ public class DGraphQueryUtils {
       }
     }
     return valueMap;
+  }
+
+  public static Map<String, Map> getQueryMapFromClass(Class<? extends DgraphEntity> targetClass,
+      Function<String, String> findIdentifierByPath) {
+    Map<String, Class<? extends DgraphMultiClassEntity>> pathToMultiClassMap = DGraphMultiClassEntityUtils.findMultiClassWithPath(
+        targetClass, findIdentifierByPath);
+
+    Class<? extends DgraphMultiClassEntity> correctTargetClass = DGraphMultiClassEntityUtils.tryResolveMultiClassEntity(
+        findIdentifierByPath.apply(""),
+        DGraphMultiClassEntityUtils.findMultiClassParent(targetClass));
+    return DGraphQueryUtils.getFieldMap(
+        correctTargetClass != null ? correctTargetClass : targetClass, pathToMultiClassMap, "");
   }
 }

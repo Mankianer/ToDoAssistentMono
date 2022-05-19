@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-public class DgraphConfigEntity<T extends DgraphEntity> extends DgraphEntity {
+public class DgraphConfig<T extends DgraphEntity> extends DgraphEntity {
 
   @NonNull
   private String _ConfigName;

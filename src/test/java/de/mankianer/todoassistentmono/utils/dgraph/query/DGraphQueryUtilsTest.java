@@ -122,7 +122,7 @@ class DGraphQueryUtilsTest {
         "year", DGraphType.INT, CompareTypes.GREATER);
     assertEquals(findByValueQuery,
         DGraphQueryUtils.createFindByAndFilterFunctionsQuery(
-                DGraphQueryUtils.getFieldMap(YearScheme.class, Map.of(), ""), rootFilter, filter2,
+                rootFilter, DGraphQueryUtils.getFieldMap(YearScheme.class, Map.of(), ""), filter2,
                 filter3)
             .buildQueryString());
   }

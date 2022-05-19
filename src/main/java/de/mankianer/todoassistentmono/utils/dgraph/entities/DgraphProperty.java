@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 public class DgraphProperty<T extends DgraphEntity> extends DgraphEntity {
 
   @NonNull
-  private String name;
+  private String _ConfigName;
+  @NonNull
+  private String propertyName;
   private T value;
 }
